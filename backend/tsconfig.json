@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    /* Saída dos arquivos compilados */
+    "outDir": "dist",
+    "rootDir": "src",
+
+    /* Compatibilidade do código */
+    "target": "ES2019",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+
+    /* Facilita import/export */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Suporte a paths relativos/absolutos */
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
+
+    /* Qualidade do código */
+    "strict": true,
+    "skipLibCheck": true,
+
+    /* Gera mapas para debug (opcional) */
+    "sourceMap": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
