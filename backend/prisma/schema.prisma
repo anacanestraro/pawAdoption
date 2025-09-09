@@ -2,13 +2,195 @@ generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
 model User {
   id    Int     @id @default(autoincrement())
   name  String
   email String  @unique
 }
 
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+model Endereco {
+  id  Int @id @default(autoincrement())
+  cep String @db.VarChar(9)
+  logradouro String @db.VarChar(255)
+  numero String? @db.VarChar(20)
+  complemento String? @db.VarChar(100)
+  bairro String @db.VarChar(100)
+  cidade String @db.VarChar(100)
+  estado String @db.VarChar(2)
+
+  usuarios Usuario[]
+}
+
+model Usuario {
+  id  Int  @id @default(autoincrement())
+  email String  @unique
+  senha_hash String?  
+  nome  String @db.VarChar(100)
+  telefone String? @db.VarChar(20)
+  tipo_usuario String @db.VarChar(100)
+  ativo Boolean @default(true)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  endereco_id Int?
+  endereco  Endereco? @relation(fields: [endereco_id], references: [id])
+
+  adotante Adotante?
+  abrigo Abrigo?
+  administrador Administrador?
+  denuncias Denuncia[]
+  validacoes ValidacaoAnimal[]
+}
+
+model Abrigo {
+  usuario_id  Int @id
+  cnpj  String? @unique
+  razao_social  String?
+  nome String?
+  capacidade Int?
+  sobre String?
+  site_url  String?
+  redes_sociais String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  usuario Usuario @relation(fields: [usuario_id], references:[id])
+  animais Animal[]
+  voluntarios VoluntarioAbrigo[]
+}
+
+model Adotante {
+  usuario_id Int @id
+  cpf String? @unique
+  data_nascimento DateTime?
+  lar_temporario Boolean @default(false)
+  capacidade_lar_temporario Int?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  usuario Usuario @relation(fields: [usuario_id], references: [id])
+  animais_adotados Animal[] @relation("AdotanteAnimais")
+  lar_temporario_animais Animal[] @relation("LarTemporarioAnimais")
+  solicitacoes SolicitacaoAdocao[]
+  voluntario_abrigo VoluntarioAbrigo[]
+}
+
+model Administrador {
+  usuario_id Int @id
+  nivel_acesso Int @default(1)
+  departamento String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  usuario Usuario @relation(fields: [usuario_id], references:[id])
+  denuncias Denuncia[]
+}
+
+model Animal {
+  id Int @id @default(autoincrement())
+  nome String @db.VarChar(100)
+  especie String @db.VarChar(50)
+  raca String?
+  idade Int?
+  porte String?
+  sexo String?
+  descricao String?
+  status String @default("disponivel")
+  localizacao String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  abrigo_id Int?
+  abrigo Abrigo? @relation(fields: [abrigo_id], references: [usuario_id])
+  adotante_id Int?
+  adotante Adotante? @relation("AdotanteAnimais", fields: [adotante_id], references:[usuario_id])
+  lar_temporario_id Int?
+  lar_temporario Adotante? @relation("LarTemporarioAnimais", fields: [lar_temporario_id], references: [usuario_id])
+
+  data_criacao DateTime @default(now())
+  data_adocao DateTime?
+
+  fotos AnimalFoto[]
+  validacoes ValidacaoAnimal[]
+  denuncias Denuncia[]
+  solicitacoes SolicitacaoAdocao[]
+}
+
+model AnimalFoto {
+  id Int @id @default(autoincrement())
+  animal_id Int
+  url_foto String @db.VarChar(500)
+  validada Boolean @default(false)
+  data_upload DateTime @default(now())
+
+  animal Animal @relation(fields:[animal_id], references:[id])
+}
+
+model ValidacaoAnimal {
+  id Int @id @default(autoincrement())
+  animal_id Int
+  usuario_id Int
+  tipo_validacao  String?
+  status String @default("pendente")
+  comentario String?
+  data_validacao DateTime @default(now())
+
+  animal Animal @relation(fields: [animal_id], references: [id])
+  usuario Usuario @relation(fields: [usuario_id], references:[id])
+}
+
+model Denuncia {
+  id Int @id @default(autoincrement())
+  animal_id Int 
+  usuario_denunciante_id Int 
+  motivo String
+  status String @default("pendente")
+  admin_responsavel_id Int?
+  data_resolucao DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  animal Animal @relation(fields: [animal_id], references: [id])
+  usuario_denunciante Usuario @relation(fields: [usuario_denunciante_id])
+}
+
+model SolicitacaoAdocao {
+  id Int @id @default(autoincrement())
+  animal_id Int
+  adotante_id Int
+  status String @default("pendente")
+  data_resposta DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  animal Animal @relation(fields: [animal_id], references:[id])
+  adotante Adotante @relation(fields: [adotante_id], references: [usuario_id])
+}
+
+model VoluntarioAbrigo {
+  id Int @id @default(autoincrement())
+  adotante_id Int
+  abrigo_id Int
+  disponibilidade String?
+  habilidades String?
+  status String @default ("pendente")
+  data_cadastro DateTime @default(now())
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  adotante Adotante @relation(fields: [adotante_id], references: [usuario_id])
+  abrigo Abrigo @relation(fields: [abrigo_id], references: [usuario_id])
 }
