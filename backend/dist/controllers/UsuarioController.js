@@ -1,0 +1,36 @@
+import prisma from "../lib/client";
+export const listarUsuarios = async (req, res) => {
+    try {
+        const usuarios = await prisma.usuario.findMany();
+        return res.status(200).json(usuarios);
+    }
+    catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar usuários" });
+    }
+};
+export const listarUsuarioPorId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const usuario = await prisma.usuario.findUnique({
+            where: { id: Number(id) },
+            include: { endereco: true },
+        });
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuário não encontrado" });
+        }
+        return res.json(usuario);
+    }
+    catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar usuário" });
+    }
+};
+// export const cadastrarUsuario = async (req:Request, res: Response) => {
+//     try {
+//         const {email, senha_hash, nome, telefone, tipo_usuario, ativo, endereco_id} = req.body;
+// 
+//         
+//     }catch (error) {
+// 
+//     } 
+// }
+//# sourceMappingURL=UsuarioController.js.map

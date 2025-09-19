@@ -1,28 +1,23 @@
 {
   "compilerOptions": {
-    /* Saída dos arquivos compilados */
-    "outDir": "dist",
     "rootDir": "src",
+    "outDir": "dist",
 
-    /* Compatibilidade do código */
-    "target": "ES2019",
-    "module": "ESNext",
+    "target": "ES2020",
+    "module": "CommonJS",
     "moduleResolution": "Node",
 
-    /* Facilita import/export */
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "lib": ["ES2020"],
+    "types": ["node"],
 
-    /* Suporte a paths relativos/absolutos */
-    "baseUrl": "./src",
-    "resolveJsonModule": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
 
-    /* Qualidade do código */
     "strict": true,
-    "skipLibCheck": true,
-
-    /* Gera mapas para debug (opcional) */
-    "sourceMap": true
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

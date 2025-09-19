@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
+import usuarioRotas from "./routes/UsuarioRoute";
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ app.get('/users', async (req, res) => {
   const users = await prisma.user.findMany();
   res.json(users);
 });
+
+app.use(usuarioRotas);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

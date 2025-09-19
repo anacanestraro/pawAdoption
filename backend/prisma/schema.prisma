@@ -26,13 +26,19 @@ model Endereco {
   usuarios Usuario[]
 }
 
+enum Tipo_usuario {
+  ADOTANTE
+  ABRIGO
+  ADMINISTRADOR
+}
+
 model Usuario{
   id  Int  @id @default(autoincrement())
   email String  @unique
   senha_hash String?  
   nome  String @db.VarChar(100)
   telefone String? @db.VarChar(20)
-  tipo_usuario String @db.VarChar(100)
+  tipo_usuario Tipo_usuario
   ativo Boolean @default(true)
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
