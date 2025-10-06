@@ -3,15 +3,15 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./Backend
+      context: ./backend
     container_name: dev-backend
     ports:
       - "5000:5000"
     volumes:
-      - ./Backend:/app
+      - ./backend:/app
       - /app/node_modules
     env_file:
-      - ./Backend/.env
+      - ./backend/.env
     depends_on:
       - db
     command: sh -c "npx prisma migrate dev --name init && npx prisma generate && npm run dev"
@@ -19,12 +19,12 @@ services:
 
   frontend:
     build:
-      context: ./Frontend
+      context: ./frontend
     container_name: dev-frontend
     ports:
       - "5173:5173"
     volumes:
-      - ./Frontend:/app
+      - ./frontend:/app
       - /app/node_modules
     environment:
       VITE_BACKEND_URL: http://backend:5000
@@ -38,7 +38,7 @@ services:
     ports:
       - "3306:3306"
     env_file:
-      - ./Backend/.env
+      - ./backend/.env
     volumes:
       - mysql_data:/var/lib/mysql
     restart: always
@@ -46,15 +46,15 @@ services:
   
   prisma-studio:
     build: 
-      context: ./Backend
+      context: ./backend
     command: npx prisma studio --port 5555 --browser none
     ports:
       - "5555:5555"
     volumes:
-      - ./Backend:/app
+      - ./backend:/app
       - /app/node_modules
     env_file:
-      - ./Backend/.env
+      - ./backend/.env
     depends_on:
       - db
 volumes:
