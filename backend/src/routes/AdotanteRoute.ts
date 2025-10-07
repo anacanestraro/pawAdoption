@@ -5,6 +5,6 @@ const router = Router();
 
 router.get("/", AdotanteController.listarAdotantes);
 router.post("/cadastrar", AdotanteController.cadastrarAdotante);
-router.put("/:id", AdotanteController.atualizarAdotante);
+router.put("/editar/:id", AdotanteController.atualizarAdotante);
 
 export default router;
