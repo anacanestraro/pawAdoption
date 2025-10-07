@@ -4,11 +4,7 @@ import prisma from "../lib/client";
 export const listarUsuarios = async (req: Request, res: Response) => {
     try {
         const usuarios = await prisma.usuario.findMany({
-            where: {
-            deleted_at: null,
-            usuario: { ativo: true },
-            },
-            include: { usuario: true },
+            where: { ativo: true, deleted_at: null },
         });
         return res.status(200).json(usuarios);
     }catch (error){
