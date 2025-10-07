@@ -2,6 +2,7 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 import usuarioRotas from "./routes/UsuarioRoute";
+import adotanteRotas from "./routes/AdotanteRoute";
 
 dotenv.config();
 
@@ -20,7 +21,8 @@ app.get('/users', async (req, res) => {
   res.json(users);
 });
 
-app.use(usuarioRotas);
+app.use("/adotantes", adotanteRotas);
+app.use("/usuarios", usuarioRotas);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

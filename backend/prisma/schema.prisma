@@ -44,7 +44,19 @@ model Usuario{
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 
+  adotante Adotante?
+
   endereco_id Int?
   endereco Endereco? @relation(fields: [endereco_id], references:[id]) 
 
+}
+
+model Adotante {
+  usuario_id  Int @id
+  cpf String? @unique @db.VarChar(14)
+  data_nascimento DateTime?
+  lar_temporario  Boolean @default(false)
+  capacidade_lar_temporario Int?
+
+  usuario Usuario @relation(fields: [usuario_id], references: [id])
 }

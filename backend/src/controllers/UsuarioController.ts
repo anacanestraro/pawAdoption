@@ -26,13 +26,3 @@ export const listarUsuarioPorId = async (req: Request, res: Response) => {
         return res.status(500).json({error:"Erro ao buscar usuário"});
     }
 }
-
-// export const cadastrarUsuario = async (req:Request, res: Response) => {
-//     try {
-//         const {email, senha_hash, nome, telefone, tipo_usuario, ativo, endereco_id} = req.body;
-// 
-//         
-//     }catch (error) {
-// 
-//     } 
-// }
