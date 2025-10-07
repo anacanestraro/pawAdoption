@@ -74,7 +74,7 @@ model Abrigo {
   razao_social String @db.VarChar(255)
   capacidade Int? @default(0)
   sobre String? @db.Text
-  site_url String @db.VarChar(255)
+  site_url String? @db.VarChar(255)
   redes_sociais String? @db.Text
 
   usuario Usuario @relation(fields: [usuario_id], references: [id])
