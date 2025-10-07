@@ -76,6 +76,9 @@ model Abrigo {
   sobre String? @db.Text
   site_url String? @db.VarChar(255)
   redes_sociais String? @db.Text
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
 
   usuario Usuario @relation(fields: [usuario_id], references: [id])
 }
