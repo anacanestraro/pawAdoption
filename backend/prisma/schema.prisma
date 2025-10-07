@@ -22,6 +22,9 @@ model Endereco {
   bairro String @db.VarChar(100)
   cidade String @db.VarChar(100)
   estado String @db.VarChar(2)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
 
   usuarios Usuario[]
 }
@@ -57,6 +60,9 @@ model Adotante {
   data_nascimento DateTime?
   lar_temporario  Boolean @default(false)
   capacidade_lar_temporario Int?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
 
   usuario Usuario @relation(fields: [usuario_id], references: [id])
 }
