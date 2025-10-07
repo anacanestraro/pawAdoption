@@ -1,11 +1,7 @@
 import { EnderecoDTO } from "./EnderecoDTO";
+import { NovoUsuarioDTO } from "./UsuarioDTO";
 
-export interface NovoAdotanteDTO {
-  nome: string;
-  email: string;
-  senha: string;
-  telefone?: string;
-  endereco?: EnderecoDTO;
+export interface NovoAdotanteDTO extends Omit<NovoUsuarioDTO, "tipo_usuario"> {
   cpf?: string;
   data_nascimento?: Date;
   lar_temporario?: boolean;
