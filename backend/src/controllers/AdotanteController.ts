@@ -175,8 +175,8 @@ export const deletarAdotante = async (req: Request, res: Response) => {
       }),
     ]);
 
-    return res.status(200).json({ message: "Adotante desativado com sucesso." });
+    return res.status(200).json({ message: "Adotante desativado com sucesso" });
   } catch (error) {
-    return res.status(500).json({ error: "Erro ao desativar adotante." });
+    return res.status(500).json({ error: "Erro ao desativar adotante" });
   }
 };
