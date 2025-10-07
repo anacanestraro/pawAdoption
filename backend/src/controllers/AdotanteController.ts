@@ -5,7 +5,13 @@ import bcrypt from "bcryptjs";
 
 export const listarAdotantes = async (req: Request, res: Response) => {
     try {
-        const adotantes = await prisma.adotante.findMany();
+        const adotantes = await prisma.adotante.findMany({
+          where: {
+          deleted_at: null,
+          usuario: { ativo: true },
+          },
+          include: { usuario: true },
+        });
         return res.status(200).json(adotantes);
     }catch(error){
         return res.status(500).json({error:"Erro ao buscar adotantes"});
