@@ -141,3 +141,36 @@ export const atualizarAdotante = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Erro ao atualizar adotante" });
   }
 };
+
+export const deletarAdotante = async (req: Request, res: Response) => {
+  const { id } = req.params; // id = usuario_id
+
+  try {
+    const adotante = await prisma.adotante.findUnique({
+      where: { usuario_id: Number(id) },
+      include: { usuario: true },
+    });
+
+    if (!adotante) {
+      return res.status(404).json({ error: "Adotante não encontrado" });
+    }
+
+    await prisma.$transaction([
+      prisma.adotante.update({
+        where: { usuario_id: Number(id) },
+        data: { deleted_at: new Date() },
+      }),
+      prisma.usuario.update({
+        where: { id: Number(id) },
+        data: {
+          ativo: false,
+          deleted_at: new Date(),
+        },
+      }),
+    ]);
+
+    return res.status(200).json({ message: "Adotante desativado com sucesso." });
+  } catch (error) {
+    return res.status(500).json({ error: "Erro ao desativar adotante." });
+  }
+};
