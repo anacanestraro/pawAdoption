@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 import usuarioRotas from "./routes/UsuarioRoute";
 import adotanteRotas from "./routes/AdotanteRoute";
+import abrigoRotas from "./routes/AbrigoRoute";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.get('/users', async (req, res) => {
   res.json(users);
 });
 
+app.use("/abrigos", abrigoRotas);
 app.use("/adotantes", adotanteRotas);
 app.use("/usuarios", usuarioRotas);
 
