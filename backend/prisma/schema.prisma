@@ -48,6 +48,7 @@ model Usuario{
   deleted_at  DateTime?
 
   adotante Adotante?
+  abrigo Abrigo?
 
   endereco_id Int?
   endereco Endereco? @relation(fields: [endereco_id], references:[id]) 
@@ -56,13 +57,25 @@ model Usuario{
 
 model Adotante {
   usuario_id  Int @id
-  cpf String? @unique @db.VarChar(14)
+  cpf String @unique @db.VarChar(14)
   data_nascimento DateTime?
   lar_temporario  Boolean @default(false)
   capacidade_lar_temporario Int?
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
+
+  usuario Usuario @relation(fields: [usuario_id], references: [id])
+}
+
+model Abrigo {
+  usuario_id Int @id 
+  cnpj String @unique @db.VarChar(18)
+  razao_social String @db.VarChar(255)
+  capacidade Int? @default(0)
+  sobre String? @db.Text
+  site_url String @db.VarChar(255)
+  redes_sociais String? @db.Text
 
   usuario Usuario @relation(fields: [usuario_id], references: [id])
 }
