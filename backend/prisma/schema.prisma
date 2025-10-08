@@ -49,6 +49,7 @@ model Usuario{
 
   adotante Adotante?
   abrigo Abrigo?
+  administrador Administrador?
 
   endereco_id Int?
   endereco Endereco? @relation(fields: [endereco_id], references:[id]) 
@@ -81,4 +82,12 @@ model Abrigo {
   deleted_at  DateTime?
 
   usuario Usuario @relation(fields: [usuario_id], references: [id])
+}
+
+model Administrador {
+  usuario_id Int @id
+  nivel_acesso Int @default(1)
+  departamento @db.VarChar(100)
+
+  usuario Usuario @relation(fields: [usuario_id], references:[id])
 }
