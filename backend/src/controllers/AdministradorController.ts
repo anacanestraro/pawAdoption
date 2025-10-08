@@ -71,3 +71,75 @@ export async function cadastrarAdministrador (req: Request, res: Response) {
         return res.status(500).json({error: "Erro ao cadastrar administrador"})
     }
 }
+
+export async function atualizarAdministrador(req: Request, res: Response) {
+    const {id} = req.params;
+    const dados: Partial<NovoAdministradorDTO> = req.body;
+
+    try {
+        const administradorExistente = await prisma.administrador.findUnique({
+            where: {usuario_id: Number(id)},
+            include: { usuario: { include: { endereco:true } } },
+        });
+
+        if (!administradorExistente) {
+            return res.status(404).json({error: "Administrador não encontrado"});
+        }
+
+        const result = await prisma.$transaction(async(tx) => {
+            const usuarioAtualizado = await tx.usuario.update({
+                where: { id: Number(id) },
+                data: {
+                nome: dados.nome ?? administradorExistente.usuario.nome,
+                email: dados.email ?? administradorExistente.usuario.email,
+                telefone: dados.telefone ?? administradorExistente.usuario.telefone,
+                senha_hash: dados.senha
+                    ? await bcrypt.hash(dados.senha, 10)
+                    : administradorExistente.usuario.senha_hash,
+                endereco: dados.endereco
+                    ? {
+                        upsert: {
+                            where: {
+                                usuario_id: administradorExistente.usuario.id,
+                            },
+                        create: {
+                            cep: dados.endereco.cep,
+                            logradouro: dados.endereco.logradouro,
+                            numero: dados.endereco.numero,
+                            complemento: dados.endereco.complemento,
+                            bairro: dados.endereco.bairro,
+                            cidade: dados.endereco.cidade,
+                            estado: dados.endereco.estado,
+                        },
+                        update: {
+                            cep: dados.endereco.cep,
+                            logradouro: dados.endereco.logradouro,
+                            numero: dados.endereco.numero,
+                            complemento: dados.endereco.complemento,
+                            bairro: dados.endereco.bairro,
+                            cidade: dados.endereco.cidade,
+                            estado: dados.endereco.estado,
+                        },
+                        },
+                    }
+                    : undefined,
+                },
+            });
+
+            const administradorAtualizado = await tx.administrador.update({
+                where: {usuario_id: Number(id)},
+                data: {
+                    nivel_acesso:dados.nivel_acesso ?? administradorExistente.nivel_acesso,
+                    departamento: dados.departamento ?? administradorExistente.departamento,
+                },
+                include: {
+                    usuario: {include: { endereco: true}},
+                },
+            });
+            return administradorAtualizado;
+        });
+        return res.status(200).json(result);
+    }catch(error) {
+        return res.status(500).json({error: "Erro ao atualizar administrador"})
+    }
+}
