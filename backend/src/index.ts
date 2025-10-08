@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import usuarioRotas from "./routes/UsuarioRoute";
 import adotanteRotas from "./routes/AdotanteRoute";
 import abrigoRotas from "./routes/AbrigoRoute";
+import administradoresRotas from "./routes/AdministradorRoute";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get('/users', async (req, res) => {
   res.json(users);
 });
 
+app.use("/administradores", administradoresRotas);
 app.use("/abrigos", abrigoRotas);
 app.use("/adotantes", adotanteRotas);
 app.use("/usuarios", usuarioRotas);
