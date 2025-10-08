@@ -1,4 +1,3 @@
-import { EnderecoDTO } from "./EnderecoDTO";
 import { NovoUsuarioDTO } from "./UsuarioDTO";
 
 export interface NovoAbrigoDTO extends Omit<NovoUsuarioDTO, "tipo_usuario">{
