@@ -99,9 +99,6 @@ export async function atualizarAdministrador(req: Request, res: Response) {
                 endereco: dados.endereco
                     ? {
                         upsert: {
-                            where: {
-                                usuario_id: administradorExistente.usuario.id,
-                            },
                         create: {
                             cep: dados.endereco.cep,
                             logradouro: dados.endereco.logradouro,
@@ -141,5 +138,38 @@ export async function atualizarAdministrador(req: Request, res: Response) {
         return res.status(200).json(result);
     }catch(error) {
         return res.status(500).json({error: "Erro ao atualizar administrador"})
+    }
+}
+
+export const deletarAdministrador = async(req: Request, res:Response) => {
+    const { id } = req.params;
+
+    try {
+        const administrador = await prisma.administrador.findUnique({
+            where: {usuario_id: Number(id)},
+            include: {usuario:true},
+        });
+
+        if(!administrador) {
+            return res.status(404).json({error: "Administrador não encontrado"});
+        }
+
+        await prisma.$transaction([
+            prisma.administrador.update({
+                where: {usuario_id: Number(id)},
+                data: { deleted_at: new Date() },
+            }),
+            prisma.usuario.update({
+                where: { id: Number(id) },
+                data: {
+                    ativo: false,
+                    deleted_at: new Date(),
+                },
+      }),
+        ]);
+
+        return res.status(200).json({message:"Administrador desativado com sucesso"});
+    }catch(error) {
+        return res.status(500).json({error: "Erro ao desativar administrador"});
     }
 }
