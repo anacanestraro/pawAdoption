@@ -87,7 +87,7 @@ model Abrigo {
 model Administrador {
   usuario_id Int @id
   nivel_acesso Int @default(1)
-  departamento @db.VarChar(100)
+  departamento String @db.VarChar(100)
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
