@@ -32,21 +32,23 @@ export async function cadastrarAdotante(req: Request, res: Response) {
           nome: dados.nome,
           telefone: dados.telefone,
           tipo_usuario: "ADOTANTE",
-          endereco: dados.endereco
-            ? {
-                create: {
-                  cep: dados.endereco.cep,
-                  logradouro: dados.endereco.logradouro,
-                  numero: dados.endereco.numero,
-                  complemento: dados.endereco.complemento,
-                  bairro: dados.endereco.bairro,
-                  cidade: dados.endereco.cidade,
-                  estado: dados.endereco.estado,
-                },
-              }
-            : undefined,
         },
       });
+
+      if(dados.endereco) {
+        await tx.endereco.create({
+          data: {
+            cep: dados.endereco.cep,
+            logradouro: dados.endereco.logradouro,
+            numero: dados.endereco.numero,
+            complemento: dados.endereco.complemento,
+            bairro: dados.endereco.bairro,
+            cidade: dados.endereco.cidade,
+            estado: dados.endereco.estado,
+            usuario_id: usuario.id
+          }
+        });
+      }
 
       const adotante = await tx.adotante.create({
         data: {
@@ -100,7 +102,7 @@ export const atualizarAdotante = async (req: Request, res: Response) => {
             : adotanteExistente.usuario.senha_hash,
           endereco: dados.endereco
             ? {
-                upsert: {
+                upsert: {             
                   create: {
                     cep: dados.endereco.cep,
                     logradouro: dados.endereco.logradouro,
