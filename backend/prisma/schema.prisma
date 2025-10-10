@@ -26,7 +26,9 @@ model Endereco {
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 
-  usuarios Usuario[]
+
+  usuario_id   Int?     @unique
+  usuario      Usuario? @relation(fields: [usuario_id], references: [id])
 }
 
 enum Tipo_usuario {
@@ -51,8 +53,7 @@ model Usuario{
   abrigo Abrigo?
   administrador Administrador?
 
-  endereco_id Int?
-  endereco Endereco? @relation(fields: [endereco_id], references:[id]) 
+  endereco     Endereco?
 
 }
 
