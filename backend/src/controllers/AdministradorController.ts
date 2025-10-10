@@ -32,22 +32,23 @@ export async function cadastrarAdministrador (req: Request, res: Response) {
                     nome: dados.nome,
                     telefone: dados.telefone,
                     tipo_usuario: "ADMINISTRADOR",
-                    endereco: dados.endereco
-                        ? {
-                            create: {
-                                cep: dados.endereco.cep,
-                                logradouro: dados.endereco.logradouro,
-                                numero: dados.endereco.numero,
-                                complemento: dados.endereco.complemento,
-                                bairro: dados.endereco.bairro,
-                                cidade: dados.endereco.cidade,
-                                estado: dados.endereco.estado,
-                            },
-                        }
-                    : undefined,
                 },
             });
 
+            if(dados.endereco) {
+                await tx.endereco.create({
+                    data: {
+                        cep: dados.endereco.cep,
+                        logradouro: dados.endereco.logradouro,
+                        numero: dados.endereco.numero,
+                        complemento: dados.endereco.complemento,
+                        bairro: dados.endereco.bairro,
+                        cidade: dados.endereco.cidade,
+                        estado: dados.endereco.estado,
+                        usuario_id: usuario.id
+                    }
+                });
+            }
             const administrador = await tx.administrador.create({
                 data: {
                     usuario_id: usuario.id,
