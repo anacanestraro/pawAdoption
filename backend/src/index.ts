@@ -5,6 +5,7 @@ import usuarioRotas from "./routes/UsuarioRoute";
 import adotanteRotas from "./routes/AdotanteRoute";
 import abrigoRotas from "./routes/AbrigoRoute";
 import administradoresRotas from "./routes/AdministradorRoute";
+import animaisRotas from "./routes/AnimalRoute";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use("/administradores", administradoresRotas);
 app.use("/abrigos", abrigoRotas);
 app.use("/adotantes", adotanteRotas);
 app.use("/usuarios", usuarioRotas);
+app.use("/animais", animaisRotas);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
