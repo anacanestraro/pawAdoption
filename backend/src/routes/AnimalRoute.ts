@@ -7,5 +7,6 @@ const router = Router();
 router.get("/", AnimalController.listarAnimais);
 router.post("/cadastrar", autenticarJWT, AnimalController.cadastrarAnimal);
 router.put("/editar/:id", autenticarJWT, AnimalController.atualizarAnimal);
+router.delete("/deletar/:id", autenticarJWT, AnimalController.deletarAnimal);
 
 export default router;

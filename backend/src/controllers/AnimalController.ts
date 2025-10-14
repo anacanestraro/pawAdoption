@@ -88,3 +88,27 @@ export const atualizarAnimal = async (req: Request, res: Response) => {
         return res.status(500).json({ error: "Erro ao atualizar animal" });
     }
 }
+
+export const deletarAnimal = async (req: Request, res: Response) => {
+    const  {id} = req.params;
+
+    try {
+        const animal = await prisma.animal.findUnique({
+            where: { id: Number(id) }
+        });
+
+        if (!animal) {
+            return res.status(404).json({ error: "Animal não encontrado" });
+        }
+
+        await prisma.animal.update({
+            where: { id: Number(id) },
+            data: { deleted_at: new Date() }
+        });
+
+        return res.status(200).json({message: "Animal desativado com sucesso"});
+    }catch(error){
+        return res.status(500).json({error: "Erro ao desativar animal"})
+
+    }
+}
