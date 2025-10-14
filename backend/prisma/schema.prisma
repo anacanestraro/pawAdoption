@@ -129,6 +129,7 @@ model Animal {
   status Status @default(DISPONIVEL)
   data_adocao DateTime?
   created_at DateTime @default(now())
+  deleted_at DateTime?
 
   abrigo_id Int?
   abrigo Abrigo? @relation("AnimalAbrigo", fields: [abrigo_id], references: [usuario_id])
