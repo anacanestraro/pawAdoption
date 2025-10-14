@@ -1,4 +1,4 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import prisma from "../lib/client";
 import { NovoAnimalDTO } from "../dtos/AnimalDTO";
 import { AuthRequest } from "../middlewares/auth";
@@ -11,12 +11,12 @@ export const listarAnimais = async (req: Request, res: Response) => {
             }
         });
         return res.status(200).json(animais);
-    }catch(error) {
-        return res.status(500).json({error: "Erro ao buscar animais"});
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar animais" });
     }
 }
 
-export const cadastrarAnimal  = async (req: AuthRequest<NovoAnimalDTO>, res: Response) => {
+export const cadastrarAnimal = async (req: AuthRequest<NovoAnimalDTO>, res: Response) => {
     const dados = req.body;
 
     try {
@@ -51,7 +51,40 @@ export const cadastrarAnimal  = async (req: AuthRequest<NovoAnimalDTO>, res: Res
         });
 
         return res.status(201).json(novoAnimal);
-    }catch(error) {
-        return res.status(500).json({error: "Erro ao cadastrar animal"});
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao cadastrar animal" });
+    }
+}
+
+export const atualizarAnimal = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const dados: Partial<NovoAnimalDTO> = req.body;
+
+    try {
+        const animalExistente = await prisma.animal.findUnique({
+            where: { id: Number(id) },
+        });
+
+        if (!animalExistente) {
+            return res.status(404).json({ error: "Animal não encontrado" });
+        }
+
+        const animalAtualizado = await prisma.animal.update({
+            where: { id: Number(id) },
+            data: {
+                nome: dados.nome ?? animalExistente.nome,
+                especie: dados.especie ?? animalExistente.especie,
+                raca: dados.raca ?? animalExistente.raca,
+                idade: dados.idade ?? animalExistente.idade,
+                porte: dados.porte ?? animalExistente.porte,
+                sexo: dados.sexo ?? animalExistente.sexo,
+                descricao: dados.descricao ?? animalExistente.descricao,
+                status: dados.status ?? animalExistente.status,
+            }
+        });
+
+        return res.status(200).json(animalAtualizado);
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao atualizar animal" });
     }
 }

@@ -6,5 +6,6 @@ const router = Router();
 
 router.get("/", AnimalController.listarAnimais);
 router.post("/cadastrar", autenticarJWT, AnimalController.cadastrarAnimal);
+router.put("/editar/:id", autenticarJWT, AnimalController.atualizarAnimal);
 
 export default router;
