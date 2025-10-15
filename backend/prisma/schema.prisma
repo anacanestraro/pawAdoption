@@ -139,4 +139,16 @@ model Animal {
 
   adotante_id Int?
   adotante Adotante? @relation("AnimalAdotante", fields: [adotante_id], references: [usuario_id])
+
+  fotos AnimalFoto[]
+}
+
+model AnimalFoto {
+  id Int @id @default(autoincrement())
+  url_foto String @db.VarChar(500)
+  validada Boolean @default(false)
+  data_upload DateTime @default(now())
+
+  animal_id Int
+  animal Animal @relation(fields: [animal_id], references: [id])
 }
