@@ -112,3 +112,31 @@ export const deletarAnimal = async (req: Request, res: Response) => {
 
     }
 }
+
+export const uploadFotoAnimal = async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+        const file = req.file;
+
+        if(!file) {
+            return res.status(400).json({error: "Nenhum arquivo enviado."});
+        }
+
+        const animal = await prisma.animal.findUnique({where: {id: Number(id)}});
+        if(!animal) {
+            return res.status(404).json({error: "Animal não encontrado."});
+        }
+
+        const foto = await prisma.animalFoto.create({
+            data: {
+                animal_id: Number(id),
+                url_foto: `/uploads/animais/${file.filename}`,
+                validada:false
+            }
+        });
+
+        return res.status(201).json(foto);
+    }catch(error){
+        return res.status(500).json({error: "Erro ao fazer upload da foto."});
+    }
+}
