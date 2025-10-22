@@ -97,6 +97,8 @@ model Administrador {
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 
+  validacoes_feitas ValidacaoAnimal[]
+
   usuario Usuario @relation(fields: [usuario_id], references:[id])
 }
 
@@ -141,6 +143,7 @@ model Animal {
   adotante Adotante? @relation("AnimalAdotante", fields: [adotante_id], references: [usuario_id])
 
   fotos AnimalFoto[]
+  validacaoAnimal ValidacaoAnimal[]
 }
 
 model AnimalFoto {
@@ -151,4 +154,28 @@ model AnimalFoto {
 
   animal_id Int
   animal Animal @relation(fields: [animal_id], references: [id])
+}
+
+enum TipoValidacao {
+  FOTO
+  DADOS
+}
+
+enum StatusValidacao {
+  PENDENTE 
+  APROVADA 
+  REJEITADA 
+}
+
+model ValidacaoAnimal {
+  id Int @id @default(autoincrement())
+  animal_id Int
+  administrador_id Int
+  tipo_validacao TipoValidacao
+  status StatusValidacao
+  comentario String? @db.Text
+  data_validacao DateTime @default(now())
+
+  animal  Animal @relation(fields: [animal_id], references: [id])
+  administrador Administrador @relation(fields: [administrador_id], references: [usuario_id])
 }
