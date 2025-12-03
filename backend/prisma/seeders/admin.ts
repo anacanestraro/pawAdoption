@@ -1,8 +1,7 @@
 import prisma from "../../src/lib/client"
 import bcrypt from "bcryptjs";
 
-async function main() {
-    console.log("🌱 Iniciando seeder...");
+export async function seedAdm() {
 
     const senhaHash = await bcrypt.hash("admin123", 10);
 
@@ -27,10 +26,8 @@ async function main() {
         }
     });
 
-    console.log("✔ Admin criado:", admin.email);
-    console.log("✔ Seed Finalizado")
 }
 
-main().catch((e) => {
+seedAdm().catch((e) => {
     console.error(e);
 });
