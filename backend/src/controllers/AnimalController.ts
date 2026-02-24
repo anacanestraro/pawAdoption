@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/client";
 import { NovoAnimalDTO } from "../dtos/AnimalDTO";
 import { AuthRequest } from "../middlewares/auth";
+import { Status } from "@prisma/client";
 
 export const listarAnimais = async (req: Request, res: Response) => {
     try {
@@ -44,7 +45,7 @@ export const cadastrarAnimal = async (req: AuthRequest<NovoAnimalDTO>, res: Resp
                 porte: dados.porte,
                 sexo: dados.sexo,
                 descricao: dados.descricao,
-                status: dados.status || 'DISPONÍVEL',
+                status: req.usuario.tipo_usuario === 'ABRIGO' ? Status.DISPONIVEL : Status.PENDENTE,
                 abrigo_id,
                 lar_temporario_id,
             },
@@ -132,7 +133,7 @@ export const uploadFotoAnimal = async (req: Request, res: Response) => {
                 animal_id: Number(id),
                 url_foto: `/uploads/animais/${file.filename}`,
                 validada:false
-            }
+            }, 
         });
 
         return res.status(201).json(foto);
