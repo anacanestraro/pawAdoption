@@ -1,6 +1,6 @@
 export interface NovaValidacaoDTO {
     animal_id: number;
-    tipo_validacao: 'FOTO' | 'DADOS';
+    status?: 'PENDENTE' | 'APROVADA' | 'REJEITADA';
     comentario?: string;
 }
 
