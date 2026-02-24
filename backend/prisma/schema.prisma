@@ -114,6 +114,7 @@ enum Sexo {
 }
 
 enum Status {
+  PENDENTE
   DISPONIVEL
   ADOTADO
   PROCESSO_ADOCAO
@@ -128,7 +129,7 @@ model Animal {
   porte Porte
   sexo Sexo 
   descricao String? @db.Text
-  status Status @default(DISPONIVEL)
+  status Status @default(PENDENTE)
   data_adocao DateTime?
   created_at DateTime @default(now())
   deleted_at DateTime?
@@ -156,11 +157,6 @@ model AnimalFoto {
   animal Animal @relation(fields: [animal_id], references: [id])
 }
 
-enum TipoValidacao {
-  FOTO
-  DADOS
-}
-
 enum StatusValidacao {
   PENDENTE 
   APROVADA 
@@ -171,8 +167,7 @@ model ValidacaoAnimal {
   id Int @id @default(autoincrement())
   animal_id Int
   administrador_id Int
-  tipo_validacao TipoValidacao
-  status StatusValidacao
+  status StatusValidacao @default(PENDENTE)
   comentario String? @db.Text
   data_validacao DateTime @default(now())
 
