@@ -14,7 +14,7 @@ services:
       - ./backend/.env
     depends_on:
       - db
-    command: sh -c "npx prisma migrate dev --name init && npx prisma generate && npm run dev"
+    command: sh -c "npx prisma migrate dev --name init && npx prisma generate && npm install && npm run dev"
     restart: always
 
   frontend:
