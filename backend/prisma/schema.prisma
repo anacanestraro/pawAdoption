@@ -71,6 +71,8 @@ model Adotante {
 
   animais_adotados  Animal[] @relation("AnimalAdotante")
   animais_lar_temporario Animal[] @relation("AnimalLarTemporario")
+
+  solicitacaoAdocao SolicitacaoAdocao[]
 }
 
 model Abrigo {
@@ -145,6 +147,7 @@ model Animal {
 
   fotos AnimalFoto[]
   validacaoAnimal ValidacaoAnimal[]
+  solicitacaoAdocao SolicitacaoAdocao[]
 }
 
 model AnimalFoto {
@@ -173,4 +176,23 @@ model ValidacaoAnimal {
 
   animal  Animal @relation(fields: [animal_id], references: [id])
   administrador Administrador @relation(fields: [administrador_id], references: [usuario_id])
+}
+
+enum StatusAdocao {
+  PENDENTE
+  APROVADA
+  REJEITADA
+  CANCELADA
+}
+
+model SolicitacaoAdocao {
+  id Int @id @default(autoincrement())
+  animal_id Int
+  adotante_id Int
+  status StatusAdocao @default(PENDENTE)
+  data_solicitacao DateTime @default(now())
+  data_resposta DateTime?
+
+  animal  Animal @relation(fields: [animal_id], references: [id])
+  adotante Adotante @relation(fields: [adotante_id], references: [usuario_id])
 }
