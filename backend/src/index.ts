@@ -8,6 +8,7 @@ import administradoresRotas from "./routes/AdministradorRoute";
 import animaisRotas from "./routes/AnimalRoute";
 import authRotas from "./routes/AuthRouter";
 import ValidacaoRotas from "./routes/ValidacaoRoute";
+import SolicitacaoRotas from "./routes/SolicitacaoRoute";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use("/usuarios", usuarioRotas);
 app.use("/animais", animaisRotas);
 app.use("/auth", authRotas);
 app.use("/validacoes", ValidacaoRotas);
+app.use("/solicitacoes", SolicitacaoRotas)
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
