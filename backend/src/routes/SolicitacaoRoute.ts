@@ -6,5 +6,7 @@ const router = Router();
 
 router.get("/", SolicitacaoController.listarSolicitacoes);
 router.post("/solicitarAdocao/:id", autenticarJWT, SolicitacaoController.solicitarAdocao);
+router.put("/atualizarSolicitacao/:id", autenticarJWT, SolicitacaoController.atualizarSolicitacao);
+
 
 export default router;
