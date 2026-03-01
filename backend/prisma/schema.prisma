@@ -55,6 +55,7 @@ model Usuario{
 
   endereco  Endereco?
 
+  denuncias Denuncia[]
 }
 
 model Adotante {
@@ -100,6 +101,7 @@ model Administrador {
   deleted_at  DateTime?
 
   validacoes_feitas ValidacaoAnimal[]
+  denuncias_responsavel Denuncia[]
 
   usuario Usuario @relation(fields: [usuario_id], references:[id])
 }
@@ -148,6 +150,7 @@ model Animal {
   fotos AnimalFoto[]
   validacaoAnimal ValidacaoAnimal[]
   solicitacaoAdocao SolicitacaoAdocao[]
+  denuncias Denuncia[]
 }
 
 model AnimalFoto {
@@ -195,4 +198,24 @@ model SolicitacaoAdocao {
 
   animal  Animal @relation(fields: [animal_id], references: [id])
   adotante Adotante @relation(fields: [adotante_id], references: [usuario_id])
+}
+
+enum StatusDenuncia {
+  PENDENTE
+  RESOLVIDA
+}
+
+model Denuncia {
+  id Int @id @default(autoincrement())
+  animal_id Int
+  usuario_denunciante_id Int
+  motivo String? @db.Text
+  status StatusDenuncia @default(PENDENTE)
+  admin_responsavel_id Int?
+  data_denuncia DateTime @default(now())
+  data_resolucao DateTime?
+
+  animal  Animal @relation(fields: [animal_id], references: [id])
+  usuario_denunciante Usuario @relation(fields: [usuario_denunciante_id], references: [id])
+  admin_responsavel    Administrador?  @relation(fields: [admin_responsavel_id], references: [usuario_id])
 }
