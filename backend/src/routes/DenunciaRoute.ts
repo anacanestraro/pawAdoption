@@ -5,3 +5,5 @@ import { autenticarJWT } from "../middlewares/auth";
 const router = Router();
 
 router.get("/", DenunciaController.listarDenuncias);
+
+export default router
