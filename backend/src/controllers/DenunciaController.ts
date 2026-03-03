@@ -8,7 +8,7 @@ export const listarDenuncias = async (req: Request, res:Response) => {
         const denuncias = await prisma.denuncia.findMany({
             include: {
                 animal: true,
-                usuario: true,
+                usuario_denunciante: true,
             }
         });
         return res.status(200).json(denuncias);
