@@ -74,6 +74,7 @@ model Adotante {
   animais_lar_temporario Animal[] @relation("AnimalLarTemporario")
 
   solicitacaoAdocao SolicitacaoAdocao[]
+  voluntarios Voluntario[]
 }
 
 model Abrigo {
@@ -90,6 +91,7 @@ model Abrigo {
 
   usuario Usuario @relation(fields: [usuario_id], references: [id])
   animais Animal[] @relation("AnimalAbrigo")
+  voluntarios Voluntario[]
 }
 
 model Administrador {
@@ -218,4 +220,24 @@ model Denuncia {
   animal  Animal @relation(fields: [animal_id], references: [id])
   usuario_denunciante Usuario @relation(fields: [usuario_denunciante_id], references: [id])
   admin_responsavel    Administrador?  @relation(fields: [admin_responsavel_id], references: [usuario_id])
+}
+
+enum StatusVoluntario {
+  PENDENTE
+  ATIVO
+  INATIVO
+  REJEITADO
+}
+
+model Voluntario {
+  id Int @id @default(autoincrement())
+  adotante_id Int
+  abrigo_id Int
+  disponibilidade String? @db.Text
+  habilidades String? @db.Text
+  status StatusVoluntario @default(PENDENTE)
+  data_cadastro DateTime @default(now())
+
+  adotante Adotante @relation(fields: [adotante_id], references: [usuario_id])
+  abrigo Abrigo @relation(fields: [abrigo_id], references:[usuario_id])
 }
