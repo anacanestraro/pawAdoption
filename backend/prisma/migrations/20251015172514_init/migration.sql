@@ -1,5 +1,11 @@
--- AlterTable
-ALTER TABLE `Animal` ADD COLUMN `deleted_at` DATETIME(3) NULL;
+/*
+  Warnings:
+
+  - You are about to drop the `AnimalFotos` table. If the table is not empty, all the data it contains will be lost.
+
+*/
+-- DropTable
+DROP TABLE `AnimalFotos`;
 
 -- CreateTable
 CREATE TABLE `AnimalFoto` (
