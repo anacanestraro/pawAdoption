@@ -43,3 +43,20 @@ export const listarSolicitacoesPendentes = async (req: AuthRequest, res: Respons
         return res.status(500).json({ error: "Erro ao buscar solicitações pendentes" });
     }
 }
+
+export const listarMinhasSolicitacoes = async(req: AuthRequest, res: Response) => {
+    try {
+        const adotante_id = req.usuario?.id;
+        const solicitacoes = await prisma.voluntario.findMany({
+            where: {
+                adotante_id: Number(adotante_id),
+            },
+            include: {
+                abrigo: true,
+            }
+        });
+        return res.status(200).json(solicitacoes);
+    } catch(error) {
+        return res.status(500).json({error: "Erro ao buscar solicitações de adotante"});
+    }
+}

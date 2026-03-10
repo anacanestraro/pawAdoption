@@ -6,5 +6,6 @@ const router = Router();
 
 router.get("/abrigo/:abrigo_id", VoluntarioController.listarVoluntariosDoAbrigo);
 router.get("/solicitacoes/:abrigo_id", autenticarJWT, VoluntarioController.listarSolicitacoesPendentes);
+router.get("/minhas_solicitacoes", autenticarJWT, VoluntarioController.listarMinhasSolicitacoes);
 
 export default router;
