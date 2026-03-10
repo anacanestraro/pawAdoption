@@ -60,3 +60,35 @@ export const listarMinhasSolicitacoes = async(req: AuthRequest, res: Response) =
         return res.status(500).json({error: "Erro ao buscar solicitações de adotante"});
     }
 }
+
+export const solicitarVoluntario = async (req: AuthRequest<NovoVoluntarioDto>, res: Response) => {
+    try {
+        const adotante_id = req.usuario?.id;
+        const { abrigo_id } = req.params;
+        const { disponibilidade, habilidades } = req.body;
+    
+        const solicitacao_existente = await prisma.voluntario.findFirst({
+            where: {
+                adotante_id: Number(adotante_id),
+                abrigo_id: Number(abrigo_id),
+            }
+        });
+    
+        if (solicitacao_existente) {
+            return res.status(409).json({ error: "Você já possui uma solicitação para esse abrigo"});
+        }
+    
+        const solicitacao = await prisma.voluntario.create({
+            data: {
+                adotante_id: Number(adotante_id),
+                abrigo_id: Number(abrigo_id),
+                disponibilidade,
+                habilidades,
+                status: "PENDENTE"
+            }
+        });
+        return res.status(201).json(solicitacao);
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao solicitar voluntariado"});
+    }
+}
