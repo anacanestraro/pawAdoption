@@ -4,6 +4,7 @@ import { autenticarJWT } from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/listarVoluntariosAbrigo/:abrigo_id", VoluntarioController.listarVoluntariosDoAbrigo);
+router.get("/abrigo/:abrigo_id", VoluntarioController.listarVoluntariosDoAbrigo);
+router.get("/solicitacoes/:abrigo_id", autenticarJWT, VoluntarioController.listarSolicitacoesPendentes);
 
 export default router;
