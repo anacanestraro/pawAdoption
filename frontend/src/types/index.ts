@@ -5,6 +5,17 @@ export interface Usuario {
     tipo_usuario: 'ADOTANTE' | 'ABRIGO' | 'ADMINISTRADOR';
 }
 
+export interface Adotante extends Usuario {
+    usuario_id: number;
+    cpf: string;
+    data_nascimento: Date;
+    lar_temporario: boolean;
+    capacidade_lar_temporario: number;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at?: Date;
+}
+
 export interface Animal {
     id: number;
     nome: string;
