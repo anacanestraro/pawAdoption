@@ -19,6 +19,19 @@ export interface Adotante extends Usuario {
     deleted_at?: Date;
 }
 
+export interface Abrigo extends Usuario {
+    usuario_id: number;
+    cnpj: string;
+    razao_social: string;
+    capacidade?: number;
+    sobre?: string;
+    site_url?: string;
+    reder_sociais?: string;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at?: Date;
+}
+
 export interface Animal {
     id: number;
     nome: string;
@@ -35,3 +48,4 @@ export interface Animal {
     created_at: Date;
     deleted_at?: Date;
 }
+
