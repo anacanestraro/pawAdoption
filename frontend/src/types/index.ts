@@ -3,6 +3,9 @@ export interface Usuario {
     nome: string;
     email: string;
     tipo_usuario: 'ADOTANTE' | 'ABRIGO' | 'ADMINISTRADOR';
+    created_at: Date;
+    updated_at: Date;
+    deleted_at?: Date;
 }
 
 export interface Adotante extends Usuario {
@@ -29,4 +32,6 @@ export interface Animal {
     abrigo_id?: number;
     adotante_id?: number
     lar_temporario?: number;
+    created_at: Date;
+    deleted_at?: Date;
 }
