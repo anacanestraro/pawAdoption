@@ -93,7 +93,7 @@ export const solicitarVoluntario = async (req: AuthRequest<NovoVoluntarioDto>, r
     }
 }
 
-export const aprovarVoluntario = async (req: AuthRequest<AtualizarVoluntarioDTO>, res: Response) => {
+export const aprovarVoluntario = async (req: AuthRequest, res: Response) => {
     try {
         const { id } = req.params;
         const solicitacao = await prisma.voluntario.findUnique({
@@ -115,7 +115,7 @@ export const aprovarVoluntario = async (req: AuthRequest<AtualizarVoluntarioDTO>
     }
 }
 
-export const rejeitarVoluntario = async (req: AuthRequest<AtualizarVoluntarioDTO>, res: Response) => {
+export const rejeitarVoluntario = async (req: AuthRequest, res: Response) => {
     try {
         const { id } = req.params;
         const solicitacao = await prisma.voluntario.findUnique({
@@ -137,7 +137,7 @@ export const rejeitarVoluntario = async (req: AuthRequest<AtualizarVoluntarioDTO
     }
 }
 
-export const inativarVoluntario = async (req: AuthRequest<AtualizarVoluntarioDTO>, res: Response) => {
+export const inativarVoluntario = async (req: AuthRequest, res: Response) => {
     try {
         const { id } = req.params;
         const solicitacao = await prisma.voluntario.findUnique({
