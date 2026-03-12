@@ -92,3 +92,25 @@ export const solicitarVoluntario = async (req: AuthRequest<NovoVoluntarioDto>, r
         return res.status(500).json({ error: "Erro ao solicitar voluntariado"});
     }
 }
+
+export const aprovarVoluntario = async (req: AuthRequest<AtualizarVoluntarioDTO>, res: Response) => {
+    try {
+        const { id } = req.params;
+        const solicitacao = await prisma.voluntario.findUnique({
+            where: { id: Number(id) }
+        });
+        if (!solicitacao) {
+            return res.status(404).json({ error: "Solicitação não encontrada"});
+        }
+        if (solicitacao.status !== "PENDENTE") {
+            return res.status(400).json({error: "Solicitação já foi processada"});
+        }
+        const aprovado = await prisma.voluntario.update({
+            where: { id: Number(id) },
+            data: { status: "ATIVO" }
+        });
+        return res.status(200).json(aprovado);
+    } catch (error) {
+        return res.status(500).json({ error: "Errro ao aprovar voluntário" });
+    }
+}
