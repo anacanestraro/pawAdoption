@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../lib/client";
 import { AuthRequest } from "../middlewares/auth";
-import { NovoVoluntarioDto, AtualizarVoluntarioDTO } from "../dtos/VoluntarioDTO";
+import { NovoVoluntarioDto} from "../dtos/VoluntarioDTO";
 
 export const listarVoluntariosDoAbrigo = async (req: Request, res: Response) => {
     try {
