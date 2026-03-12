@@ -9,4 +9,6 @@ router.get("/solicitacoes/:abrigo_id", autenticarJWT, VoluntarioController.lista
 router.get("/minhas_solicitacoes", autenticarJWT, VoluntarioController.listarMinhasSolicitacoes);
 router.post("/solicitar/:abrigo_id", autenticarJWT, VoluntarioController.solicitarVoluntario);
 router.put("/aprovar/:id", autenticarJWT, VoluntarioController.aprovarVoluntario);
+router.put("/rejeitar/:id", autenticarJWT, VoluntarioController.rejeitarVoluntario);
+
 export default router;
