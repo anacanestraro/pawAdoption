@@ -1,3 +1,10 @@
+export interface AuthContextType {
+    usuario: Usuario | null;
+    token: string | null;
+    login: (email: string, senha: string) => Promise<void>;
+    logout: () => void;
+}
+
 export interface Usuario {
     id: number;
     nome: string;
