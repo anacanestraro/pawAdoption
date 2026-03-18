@@ -11,6 +11,7 @@ import ValidacaoRotas from "./routes/ValidacaoRoute";
 import SolicitacaoRotas from "./routes/SolicitacaoRoute";
 import denunciaRotas from "./routes/DenunciaRoute";
 import voluntarioRotas from "./routes/VoluntarioRoute";
+import cors from 'cors';
 
 dotenv.config();
 
@@ -18,6 +19,11 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 
 app.get('/', (req, res) => {
   res.send('Hello World');
