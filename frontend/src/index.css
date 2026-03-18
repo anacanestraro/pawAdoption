@@ -23,6 +23,7 @@ a:hover {
 }
 
 body {
+  font-family: 'Noto Sans', sans-serif;;
   margin: 0;
   display: flex;
   place-items: center;
