@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
         JWT_SECRET,
         { expiresIn: "8h" });
 
-        return res.json({ token });
+        return res.json({ token, usuario });
     }catch(error){
         return res.status(500).json({ error: "Erro ao autenticar" });
     }
