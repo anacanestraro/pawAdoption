@@ -57,24 +57,22 @@ export const Navbar = ({ links }: NavbarProps) => {
         .navbar {
           width: 100%;
           background: #E8A87C;
-          height: 70px;
+          height: 80px;
           display: flex;
           align-items: center;
-          justify-content: center;
-          position: sticky;
+          justify-content:center;
           top: 0;
           z-index: 100;
         }
         .navbar-container {
           width: 100%;
-          max-width: 1200px;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0 40px;
+          padding: 0 80px;
         }
         .navbar-logo {
-          font-size: 22px;
+          font-size: 28px;
           font-weight: 900;
           color: #F5ECD7 !important;
           text-decoration: none;
@@ -91,18 +89,18 @@ export const Navbar = ({ links }: NavbarProps) => {
         .navbar-links a {
           color: #F5ECD7 !important;
           text-decoration: none;
-          font-size: 15px;
+          font-size: 20px;
           font-weight: 600;
           transition: opacity 0.15s;
         }
         .navbar-links a:hover { opacity: 0.8; }
         .navbar-avatar {
-          width: 40px;
-          height: 40px;
+          width: 50px;
+          height: 50px;
           border-radius: 50%;
           background: #F5ECD7;
           color: #7B4A2D;
-          font-size: 14px;
+          font-size: 19px;
           font-weight: 800;
           display: flex;
           align-items: center;
@@ -134,7 +132,7 @@ export const Navbar = ({ links }: NavbarProps) => {
           font-size: 13px;
           font-weight: 700;
           color: #7B4A2D;
-          border-bottom: 1px solid #f0ebfa;
+          border-bottom: 1px solid #F5ECD7;
         }
         .avatar-dropdown-name span {
           display: block;
@@ -159,8 +157,8 @@ export const Navbar = ({ links }: NavbarProps) => {
         }
         .avatar-dropdown button:hover { background: #fdf2f2; }
         .navbar-btn-entrar {
-          background: #fff;
-          color: #9C47A9 !important;
+          background: #fdf2f2;
+          color: #7B4A2D !important;
           font-weight: 800;
           font-size: 15px;
           padding: 10px 28px;
