@@ -28,7 +28,7 @@ export const Login = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#e8e3f0',
+      background: '#F5ECD7',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -45,21 +45,21 @@ export const Login = () => {
           padding: 13px 15px;
           border-radius: 8px;
           border: none;
-          background: #ffffff;
+          background: #fff6e2;
           font-size: 15px;
           font-family: 'Noto Sans', sans-serif;
-          color: #3d3350;
+          color: #7B4A2D;
           outline: none;
           transition: box-shadow 0.2s;
         }
         .login-input:focus {
-          box-shadow: 0 0 0 2.5px #9b7ec8;
+          box-shadow: 0 0 0 2.5px #7B4A2D;
         }
         .btn-entrar {
           width: 100%;
           padding: 14px;
-          background: #a48bc4;
-          color: #fff;
+          background: #7B4A2D;
+          color: #F5ECD7;
           border: none;
           border-radius: 8px;
           font-size: 16px;
@@ -69,13 +69,13 @@ export const Login = () => {
           transition: background 0.2s, transform 0.1s;
           letter-spacing: 0.3px;
         }
-        .btn-entrar:hover:not(:disabled) { background: #8f6fb5; transform: translateY(-1px); }
+        .btn-entrar:hover:not(:disabled) { background: #683e26; transform: translateY(-1px); }
         .btn-entrar:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn-google {
           width: 100%;
           padding: 13px;
-          background: #fff;
-          color: #3d3350;
+          background: #F5ECD7;
+          color: #7B4A2D;
           border: none;
           border-radius: 8px;
           font-size: 15px;
@@ -88,20 +88,20 @@ export const Login = () => {
           gap: 10px;
           transition: background 0.2s, transform 0.1s;
         }
-        .btn-google:hover { background: #f5f0fc; transform: translateY(-1px); }
+        .btn-google:hover { background: #ddd2b6; transform: translateY(-1px); }
         .checkbox-label {
           display: flex;
           align-items: center;
           gap: 6px;
           font-size: 13px;
-          color: #5e4f7a;
+          color: #7B4A2D;
           cursor: pointer;
           user-select: none;
         }
         .checkbox-label input[type="checkbox"] {
           width: 13px;
           height: 13px;
-          accent-color: #9b7ec8;
+          accent-color: #7B4A2D;
           cursor: pointer;
         }
         @keyframes fadeIn {
@@ -125,7 +125,7 @@ export const Login = () => {
         {/* Card */}
         <div className="anim" style={{
           width: 405,
-          background: '#cdc5dd',
+          background: '#E8A87C',
           borderRadius: 18,
           padding: '40px 36px 36px',
           flexShrink: 0,
@@ -133,14 +133,14 @@ export const Login = () => {
           <h1 style={{
             fontSize: 40,
             fontWeight: 900,
-            color: '#241840',
+            color: '#3D2314',
             marginBottom: 5,
             letterSpacing: '-0.5px',
           }}>PawAdoption</h1>
           <p style={{
             fontSize: 17,
             fontWeight: 700,
-            color: '#3a2d58',
+            color: '#7B4A2D',
             marginBottom: 28,
           }}>Bem-vindo de volta!</p>
 
@@ -148,7 +148,7 @@ export const Login = () => {
             <div style={{ marginBottom: 16 }}>
               <label style={{
                 display: 'block', fontSize: 13, fontWeight: 600,
-                color: '#3a2d58', marginBottom: 7,
+                color: '#7B4A2D', marginBottom: 7,
               }}>Username</label>
               <input
                 className="login-input"
@@ -163,7 +163,7 @@ export const Login = () => {
             <div style={{ marginBottom: 14 }}>
               <label style={{
                 display: 'block', fontSize: 13, fontWeight: 600,
-                color: '#3a2d58', marginBottom: 7,
+                color: '#7B4A2D', marginBottom: 7,
               }}>Senha</label>
               <input
                 className="login-input"
@@ -185,7 +185,7 @@ export const Login = () => {
                 Lembre-se de mim
               </label>
               <Link to="/esqueci-senha" style={{
-                fontSize: 13, color: '#3a2d58',
+                fontSize: 13, color: '#7B4A2D',
                 textDecoration: 'none', fontWeight: 600,
               }}
                 onMouseOver={e => (e.currentTarget.style.textDecoration = 'underline')}
@@ -217,11 +217,11 @@ export const Login = () => {
 
           <p style={{
             textAlign: 'center', marginTop: 22,
-            fontSize: 14, color: '#3a2d58',
+            fontSize: 14, color: '#7B4A2D',
           }}>
             Não tem uma conta?{' '}
             <Link to="/cadastro" style={{
-              color: '#241840', fontWeight: 900, textDecoration: 'none',
+              color: '#3D2314', fontWeight: 900, textDecoration: 'none',
             }}
               onMouseOver={e => (e.currentTarget.style.textDecoration = 'underline')}
               onMouseOut={e => (e.currentTarget.style.textDecoration = 'none')}
