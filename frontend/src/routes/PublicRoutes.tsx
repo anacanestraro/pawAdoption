@@ -1,20 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Login } from '../pages/Login'
-import { useAuth } from '../context/AuthContext'
+import { Landing } from '../pages/Landing'
+import { Cadastro } from '../pages/Cadastro'
 
 export const PublicRoutes = () => {
-
-    const { token, usuario } = useAuth()
-
-    if (token && usuario) {
-        return <Navigate to={usuario.tipo_usuario === 'ADMINISTRADOR' ? '/admin' : '/home'} replace />
-    }
-
-    return (
-        <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastro" element={<h1>Cadastro</h1>}/>
-            <Route path="*" element={<Navigate to="/login" replace/>}/>
-        </Routes>
-    )
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/cadastro" element={<Cadastro />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
