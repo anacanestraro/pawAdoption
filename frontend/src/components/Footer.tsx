@@ -1,6 +1,6 @@
 export const Footer = () => {
   return (
-    <footer id="footer" style={{ background: '#2a1d42', color: 'rgba(255,255,255,0.7)', padding: '60px 40px 32px' }}>
+    <footer id="footer" style={{ background: '#F5ECD7', color: '#7B4A2D', padding: '60px 40px 32px' }}>
       <style>{`
         .footer-container {
           max-width: 1200px;
@@ -15,19 +15,21 @@ export const Footer = () => {
         .footer-logo {
           font-size: 22px;
           font-weight: 900;
-          color: #fff;
+          color: #7B4A2D;
           margin-bottom: 14px;
           letter-spacing: -0.5px;
         }
         .footer-desc {
           font-size: 14px;
           line-height: 1.7;
+          color: #94705B;
+          font-weight: 480;
           max-width: 280px;
         }
         .footer-col-title {
           font-size: 13px;
           font-weight: 800;
-          color: #fff;
+          color: #7B4A2D;
           letter-spacing: 1px;
           text-transform: uppercase;
           margin-bottom: 16px;
@@ -41,16 +43,18 @@ export const Footer = () => {
           margin: 0;
         }
         .footer-links a {
-          color: rgba(255,255,255,0.6) !important;
+          color: #94705B !important;
           text-decoration: none;
           font-size: 14px;
+          font-weight:480;
           transition: color 0.15s;
         }
-        .footer-links a:hover { color: #fff !important; }
+        .footer-links a:hover { color: #7B4A2D !important; }
         .footer-bottom {
-          border-top: 1px solid rgba(255,255,255,0.1);
+          border-top: 1px solid #94705B;
           padding-top: 24px;
           font-size: 13px;
+          font-weight:480;
           text-align: center;
         }
         @media (max-width: 768px) {
@@ -82,7 +86,7 @@ export const Footer = () => {
           </div>
         </div>
         <div className="footer-bottom">
-          © {new Date().getFullYear()} PawAdoption. Feito com ♥ para os animais.
+          © {new Date().getFullYear()} PawAdoption. Feito com amor para os animais.
         </div>
       </div>
     </footer>
