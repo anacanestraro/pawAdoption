@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate, Link } from 'react-router-dom'
+import cachorro from '../assets/cachorro.png'
 
 export const Login = () => {
   const { login } = useAuth()
@@ -158,6 +159,16 @@ export const Login = () => {
       <div className='blob-wrapper'>
         <div className='blob-shape blob-inner d-flex align-items-center justify-content-center'>
         </div>
+        <img
+          src={cachorro}
+          alt="cachorro"
+          style={{
+            position: 'absolute',
+            width: '58%',
+            height: 'auto',
+            zIndex: 1
+          }}
+        />
       </div>
 
       {/* Login card side */}
