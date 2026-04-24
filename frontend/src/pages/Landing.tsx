@@ -51,442 +51,745 @@ const LandingNav = () => {
   }, [])
 
   return (
-    <div className="landing-nav-bar" style={{ position: 'relative', zIndex: 10 }}>
-      <Link to="/" className="landing-nav-logo">PawAdoption</Link>
+    <nav className="navbar navbar-expand-lg lp-navbar">
+      <div className="container-xxl px-4">
+        <Link to="/" className="navbar-brand lp-nav-logo">PawAdoption</Link>
 
-      <div className="d-flex align-items-center gap-4">
-        <ul className="landing-nav-links">
-          <li><a href="#pets">Animais</a></li>
-          <li><a href="#footer">Contate-nos</a></li>
-          <li><a href="#como-funciona">Sobre</a></li>
-        </ul>
+        {/* Mobile toggler (hidden on desktop) */}
+        <button
+          className="navbar-toggler border-0 d-lg-none"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#landingNavCollapse"
+          aria-controls="landingNavCollapse"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          style={{ color: '#7B4A2D' }}
+        >
+          <span style={{ fontSize: 24 }}>☰</span>
+        </button>
 
-        {usuario ? (
-          <div className="landing-avatar-wrapper" ref={menuRef}>
-            <div className="landing-avatar" onClick={() => setMenuOpen(v => !v)}>{initials}</div>
-            {menuOpen && (
-              <div className="landing-avatar-dropdown">
-                <div className="landing-avatar-name">
-                  {usuario.nome}
-                  <span>{usuario.tipo_usuario?.toLowerCase()}</span>
-                </div>
-                <Link to="/home" className="landing-dropdown-link">Ir para o app</Link>
-                <button onClick={() => { logout(); navigate('/login') }}>Sair</button>
+        <div className="collapse navbar-collapse" id="landingNavCollapse">
+          <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-4">
+            <li className="nav-item">
+              <a href="#pets" className="nav-link lp-nav-link">Animais</a>
+            </li>
+            <li className="nav-item">
+              <a href="#footer" className="nav-link lp-nav-link">Contate-nos</a>
+            </li>
+            <li className="nav-item">
+              <a href="#como-funciona" className="nav-link lp-nav-link">Sobre</a>
+            </li>
+          </ul>
+
+          <div className="d-flex align-items-center mt-3 mt-lg-0">
+            {usuario ? (
+              <div className="lp-avatar-wrapper position-relative" ref={menuRef}>
+                <div className="lp-avatar" onClick={() => setMenuOpen(v => !v)}>{initials}</div>
+                {menuOpen && (
+                  <div className="lp-avatar-dropdown">
+                    <div className="lp-avatar-name">
+                      {usuario.nome}
+                      <span>{usuario.tipo_usuario?.toLowerCase()}</span>
+                    </div>
+                    <Link to="/home" className="lp-dropdown-link">Ir para o app</Link>
+                    <button onClick={() => { logout(); navigate('/login') }}>Sair</button>
+                  </div>
+                )}
               </div>
+            ) : (
+              <Link to="/login" className="lp-entrar-btn">Entrar</Link>
             )}
           </div>
-        ) : (
-          <Link to="/login" className="landing-entrar-btn">Entrar</Link>
-        )}
+        </div>
       </div>
-    </div>
+    </nav>
   )
 }
 
 export const Landing = () => {
   return (
     <>
+      {/* Google Fonts - Noto Sans */}
       <style>{`
-        .landing-nav-bar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 90px;
-          height: 100px;
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800;900&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body, .landing-root {
+          font-family: 'Noto Sans', sans-serif;
+          overflow-x: hidden;
         }
-        .landing-nav-logo {
-          font-size: 34px; font-weight: 900;
-          color: #F5ECD7 !important;
-          text-decoration: none; letter-spacing: -0.5px;
+
+        /* ── CSS Variables ── */
+        :root {
+          --creme:      #F5ECD7;
+          --laranja:    #E8A87C;
+          --marrom:     #7B4A2D;
+          --marrom-esc: #3D2314;
+          --laranja-md: #D4845A;
         }
-        .landing-nav-links {
-          display: flex; align-items: center; gap: 116px;
-          list-style: none; margin: 0; padding: 100px;
+
+        /* ══════════════════════════════════════
+           NAVBAR
+        ══════════════════════════════════════ */
+        .lp-navbar {
+          background: transparent;
+          padding: 0;
+          height: 88px;
+          position: relative;
+          z-index: 20;
         }
-        .landing-nav-links a {
-          color: #7B4A2D !important; text-decoration: none;
-          font-size: 20px; font-weight: 700; transition: opacity 0.15s;
+        .lp-nav-logo {
+          font-size: 28px;
+          font-weight: 900;
+          color: var(--creme) !important;
+          text-decoration: none;
+          letter-spacing: -0.5px;
+          font-family: 'Noto Sans', sans-serif;
         }
-        .landing-nav-links a:hover { opacity: 0.75; }
-        .landing-entrar-btn {
-          background: #E8A87C; color: #7B4A2D !important;
-          font-weight: 700; font-size: 20px;
-          padding: 10px 48px; border-radius: 50px;
-          text-decoration: none; transition: transform 0.15s, box-shadow 0.15s;
+        .lp-nav-link {
+          color: var(--marrom) !important;
+          font-size: 16px;
+          font-weight: 700;
+          text-decoration: none;
+          transition: opacity 0.15s;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-nav-link:hover { opacity: 0.7; }
+        .lp-entrar-btn {
+          background: var(--laranja);
+          color: var(--marrom) !important;
+          font-weight: 700;
+          font-size: 16px;
+          padding: 10px 36px;
+          border-radius: 50px;
+          text-decoration: none;
+          font-family: 'Noto Sans', sans-serif;
+          transition: transform 0.15s, box-shadow 0.15s;
           white-space: nowrap;
         }
-        .landing-entrar-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
-        .landing-avatar-wrapper { position: relative; }
-        .landing-avatar {
-          width: 56px; height: 56px; border-radius: 50%;
-          background: #7B4A2D; color: #F5ECD7;
-          font-size: 20px; font-weight: 800;
-          display: flex; align-items: center; justify-content: center;
-          cursor: pointer; border: 2px solid rgba(255,255,255,0.4);
-          transition: transform 0.15s; user-select: none;
+        .lp-entrar-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.2);
         }
-        .landing-avatar:hover { transform: scale(1.07); }
-        .landing-avatar-dropdown {
+        .lp-avatar-wrapper { position: relative; }
+        .lp-avatar {
+          width: 48px; height: 48px; border-radius: 50%;
+          background: var(--marrom-esc); color: var(--creme);
+          font-size: 17px; font-weight: 800;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; border: 2px solid rgba(255,255,255,0.35);
+          transition: transform 0.15s; user-select: none;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-avatar:hover { transform: scale(1.07); }
+        .lp-avatar-dropdown {
           position: absolute; top: calc(100% + 10px); right: 0;
-          background: #F5ECD7; border-radius: 12px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-          min-width: 180px; overflow: hidden;
+          background: var(--creme); border-radius: 12px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+          min-width: 184px; overflow: hidden;
           animation: dropIn 0.15s ease;
+          z-index: 100;
         }
         @keyframes dropIn {
           from { opacity: 0; transform: translateY(-6px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .landing-avatar-name {
-          padding: 14px 16px 10px; font-size: 13px; font-weight: 700;
-          color: #7B4A2D; border-bottom: 1px solid rgba(123,74,45,0.15);
+        .lp-avatar-name {
+          padding: 14px 16px 10px;
+          font-size: 13px; font-weight: 700;
+          color: var(--marrom);
+          border-bottom: 1px solid rgba(123,74,45,0.15);
+          font-family: 'Noto Sans', sans-serif;
         }
-        .landing-avatar-name span {
+        .lp-avatar-name span {
           display: block; font-size: 11px; font-weight: 500;
           color: #A0704A; margin-top: 2px; text-transform: capitalize;
         }
-        .landing-dropdown-link {
+        .lp-dropdown-link {
           display: block; padding: 11px 16px;
           font-size: 14px; font-weight: 600;
-          color: #7B4A2D !important; text-decoration: none; transition: background 0.15s;
+          color: var(--marrom) !important; text-decoration: none;
+          transition: background 0.15s;
+          font-family: 'Noto Sans', sans-serif;
         }
-        .landing-dropdown-link:hover { background: #eedfc6; }
-        .landing-avatar-dropdown button {
+        .lp-dropdown-link:hover { background: #eedfc6; }
+        .lp-avatar-dropdown button {
           width: 100%; padding: 11px 16px; background: none; border: none;
           text-align: left; font-size: 14px; font-weight: 600;
-          color: #832e25; cursor: pointer; font-family: inherit;
-          transition: background 0.15s; border-top: 1px solid rgba(123,74,45,0.1);
+          color: #832e25; cursor: pointer;
+          font-family: 'Noto Sans', sans-serif;
+          transition: background 0.15s;
+          border-top: 1px solid rgba(123,74,45,0.1);
         }
-        .landing-avatar-dropdown button:hover { background: #fdf2f2; }
+        .lp-avatar-dropdown button:hover { background: #fdf2f2; }
 
-        /* ── Hero ── */
-        .hero {
-          min-height: 100vh; background: #E8A87C;
-          position: relative; overflow: hidden;
+        /* ══════════════════════════════════════
+           HERO
+        ══════════════════════════════════════ */
+        .lp-hero {
+          background: var(--laranja);
+          position: relative;
+          overflow: hidden;
+          min-height: 100vh;
         }
-        .hero-title {
-          font-size: clamp(32px, 5vw, 56px); font-weight: 900;
-          color: #fff; line-height: 1.1; letter-spacing: -1px;
+        .lp-hero-title {
+          font-size: clamp(30px, 4.5vw, 54px);
+          font-weight: 900;
+          color: #fff;
+          line-height: 1.1;
+          letter-spacing: -1px;
+          font-family: 'Noto Sans', sans-serif;
+          margin-bottom: 16px;
         }
-        .hero-subtitle { font-size: 16px; color: rgba(255,255,255,0.85); }
-        .hero-btn-primary {
-          background: #fff; color: #7B4A2D !important;
-          font-weight: 800; font-size: 15px; padding: 12px 32px;
-          border-radius: 50px; text-decoration: none;
+        .lp-hero-subtitle {
+          font-size: 16px;
+          color: rgba(255,255,255,0.85);
+          margin-bottom: 32px;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-hero-btn-primary {
+          background: #fff;
+          color: var(--marrom) !important;
+          font-weight: 800;
+          font-size: 15px;
+          padding: 12px 32px;
+          border-radius: 50px;
+          text-decoration: none;
+          font-family: 'Noto Sans', sans-serif;
           transition: transform 0.15s, box-shadow 0.15s;
+          display: inline-block;
         }
-        .hero-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-        .hero-btn-secondary {
-          background: transparent; color: #fff !important;
-          font-weight: 700; font-size: 15px; padding: 12px 32px;
-          border-radius: 50px; text-decoration: none;
-          border: 2px solid rgba(255,255,255,0.7);
+        .lp-hero-btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .lp-hero-btn-secondary {
+          background: transparent;
+          color: #fff !important;
+          font-weight: 700;
+          font-size: 15px;
+          padding: 12px 32px;
+          border-radius: 50px;
+          text-decoration: none;
+          border: 2px solid rgba(255,255,255,0.75);
+          font-family: 'Noto Sans', sans-serif;
           transition: border-color 0.15s, background 0.15s;
+          display: inline-block;
         }
-        .hero-btn-secondary:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
-        .hero-right {
-          position: relative; width: 700px; height: 700px; flex-shrink: 0;
+        .lp-hero-btn-secondary:hover {
+          border-color: #fff;
+          background: rgba(255,255,255,0.1);
         }
-        .hero-circle {
-          width: 2250px; height: 2250px; border-radius: 50%;
-          background: #F5ECD7; position: absolute;
-          top: -1500px; right: -1500px; z-index: 1;
+
+        /* Hero image area */
+        .lp-hero-img-col {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .blob-shape { border-radius: 40% 60% 55% 45% / 50% 40% 50% 50%; }
-        .blob-wrapper {
-          display: flex !important; position: absolute;
-          top: 0; left: 0; width: 100%; height: 100%;
-          align-items: center; justify-content: center;
-          margin-left: 0; padding: 0; z-index: 2;
-          margin-top: 30px;
+        .lp-hero-circle-bg {
+          width: 2000px; height: 2000px;
+          border-radius: 50%;
+          background: var(--creme);
+          position: absolute;
+          top: -1400px; right: -1300px;
+          pointer-events: none;
+          z-index: 1;
         }
-        .blob-inner {
-          background: #E68F60;
-          width: clamp(450px, 55vw, 720px);
-          height: clamp(450px, 55vw, 720px);
+        .lp-blob-wrapper {
+          position: relative;
+          z-index: 2;
+          width: clamp(260px, 40vw, 520px);
+          height: clamp(260px, 40vw, 520px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .deco-circle-outline {
-          position: absolute; border-radius: 50%;
-          border: 3px solid #7B4A2D; pointer-events: none;
+        .lp-blob {
+          width: 100%; height: 100%;
+          background: var(--laranja-md);
+          border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%;
+          position: absolute;
+          top: 0; left: 0;
         }
-        .deco-squiggle { position: absolute; pointer-events: none; opacity: 0.45; }
-        .tri-down {
+        .lp-dog-img {
+          position: relative;
+          z-index: 3;
+          width: 60%;
+          height: auto;
+        }
+
+        /* Hero decorations */
+        .lp-deco-circle {
+          position: absolute;
+          border-radius: 50%;
+          border: 3px solid var(--marrom);
+          pointer-events: none;
+        }
+        .lp-deco-wave {
+          position: absolute;
+          pointer-events: none;
+          opacity: 0.5;
+        }
+        .lp-tri-down {
           width: 0; height: 0;
-          border-left: 8px solid transparent; border-right: 8px solid transparent;
-          border-top: 13px solid #7B4A2D;
-          position: absolute; pointer-events: none;
+          border-left: 7px solid transparent;
+          border-right: 7px solid transparent;
+          border-top: 12px solid var(--marrom);
+          position: absolute;
+          pointer-events: none;
         }
-        .tri-right-deco {
+        .lp-tri-right {
           width: 0; height: 0;
-          border-top: 7px solid transparent; border-bottom: 7px solid transparent;
-          border-left: 12px solid #7B4A2D;
-          position: absolute; pointer-events: none;
+          border-top: 6px solid transparent;
+          border-bottom: 6px solid transparent;
+          border-left: 11px solid var(--marrom);
+          position: absolute;
+          pointer-events: none;
         }
 
-        /* ── Section header ── */
-        .section-header { display: flex; align-items: center; gap: 16px; }
-        .section-header-title { font-size: 26px; font-weight: 900; color: #3D2314; white-space: nowrap; }
-        .section-header-title-light { color: #F5ECD7; }
-        .section-header-line { flex: 1; height: 2px; background: #C4845A; opacity: 0.4; }
-        .section-header-line-light { background: #F5ECD7; }
-        .section-header-arrow {
-          width: 36px; height: 36px; border-radius: 50%; background: #C4845A;
-          display: flex; align-items: center; justify-content: center;
-          color: #fff; font-size: 16px; flex-shrink: 0;
-          cursor: pointer; transition: background 0.15s;
-        }
-        .section-header-arrow:hover { background: #A66B42; }
-
-        /* ── Nav grid ── */
-        .nav-grid {
-          background: #E8A87C; border-radius: 16px; padding: 28px;
-          display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 12px; text-decoration: none; }
-        .nav-item-icon {
-          width: 80px; height: 80px; border-radius: 50%; background: #D4845A;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 36px; transition: transform 0.15s;
-        }
-        .nav-item:hover .nav-item-icon { transform: scale(1.05); }
-        .nav-item-label {
-          background: #3D2314; color: #F5ECD7;
-          font-size: 13px; font-weight: 700;
-          padding: 6px 16px; border-radius: 50px; text-align: center;
-        }
-
-        /* ── CTA cards ── */
-        .cta-card {
-          background: #3D2314; border-radius: 14px; padding: 24px 28px;
-          display: flex; align-items: center; justify-content: space-between;
-          text-decoration: none; transition: transform 0.15s, background 0.15s;
-        }
-        .cta-card:hover { transform: translateY(-2px); background: #2e1a0f; }
-        .cta-card-label { font-size: 18px; font-weight: 800; color: #F5ECD7; }
-        .cta-card-icon { font-size: 32px; opacity: 0.8; }
-
-        /* ── Action cards ── */
-        .action-card {
-          background: #E8A87C; border-radius: 14px; padding: 24px 28px;
-          display: flex; align-items: center; gap: 20px;
-          text-decoration: none; transition: transform 0.15s;
-        }
-        .action-card:hover { transform: translateY(-2px); }
-        .action-card-icon { font-size: 40px; flex-shrink: 0; }
-        .action-card-title { font-size: 17px; font-weight: 800; color: #3D2314; margin-bottom: 4px; }
-        .action-card-desc { font-size: 13px; color: #7B4A2D; line-height: 1.5; }
-
-        /* ── Pet/Abrigo cards ── */
-        .pet-card, .abrigo-card {
-          background: #E8A87C; border-radius: 14px; overflow: hidden; transition: transform 0.2s;
-        }
-        .pet-card:hover, .abrigo-card:hover { transform: translateY(-3px); }
-        .card-img-placeholder {
-          width: 100%; height: 180px; background: #D4845A;
-          display: flex; align-items: center; justify-content: center;
-          color: rgba(255,255,255,0.3); font-size: 13px;
-        }
-        .card-name { font-size: 16px; font-weight: 800; color: #3D2314; margin-bottom: 2px; }
-        .card-sub { font-size: 13px; color: #7B4A2D; margin-bottom: 12px; }
-        .card-btn {
-          display: inline-block; background: #3D2314; color: #F5ECD7 !important;
-          font-size: 13px; font-weight: 700; padding: 8px 20px; border-radius: 50px;
-          text-decoration: none; transition: background 0.15s;
-        }
-        .card-btn:hover { background: #2e1a0f; }
-
-        /* ── Passo card ── */
-        .passo-card { background: #F5ECD7; border-radius: 16px; padding: 50px 24px; }
-        .passo-num { font-size: 48px; font-weight: 900; color: #E8A87C; line-height: 1; margin-bottom: 16px; letter-spacing: -2px; }
-        .passo-titulo { font-size: 18px; font-weight: 800; color: #3D2314; margin-bottom: 8px; }
-        .passo-desc { font-size: 14px; color: #7B4A2D; line-height: 1.6; }
-
+        /* hero animations */
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .hero-left-anim { animation: fadeUp 0.6s ease both; }
-        .hero-right-anim { animation: fadeUp 0.6s ease 0.15s both; }
+        .lp-hero-left { animation: fadeUp 0.6s ease both; }
+        .lp-hero-right { animation: fadeUp 0.65s ease 0.12s both; }
 
-        @media (max-width: 768px) {
-          .hero-right { display: none; }
-          .nav-grid { grid-template-columns: repeat(2, 1fr); }
-          .landing-nav-links { display: none; }
+        /* ══════════════════════════════════════
+           SECTION HEADER
+        ══════════════════════════════════════ */
+        .lp-section-header {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          margin-bottom: 28px;
+        }
+        .lp-section-title {
+          font-size: 22px;
+          font-weight: 900;
+          color: var(--marrom-esc);
+          white-space: nowrap;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-section-title--light { color: var(--creme); }
+        .lp-section-line {
+          flex: 1;
+          height: 2px;
+          background: var(--laranja-md);
+          opacity: 0.45;
+        }
+        .lp-section-line--light { background: var(--creme); opacity: 0.6; }
+        .lp-section-arrow {
+          width: 34px; height: 34px; border-radius: 50%;
+          background: var(--laranja-md);
+          display: flex; align-items: center; justify-content: center;
+          color: #fff; font-size: 15px; flex-shrink: 0;
+          cursor: pointer; transition: background 0.15s;
+        }
+        .lp-section-arrow:hover { background: #A66B42; }
+
+        /* ══════════════════════════════════════
+           NAV GRID (Navegue section)
+        ══════════════════════════════════════ */
+        .lp-nav-grid {
+          background: var(--laranja);
+          border-radius: 16px;
+          padding: 28px 20px;
+        }
+        .lp-nav-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          text-decoration: none;
+        }
+        .lp-nav-icon {
+          width: 76px; height: 76px;
+          border-radius: 50%;
+          background: var(--laranja-md);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 32px;
+          transition: transform 0.15s;
+        }
+        .lp-nav-item:hover .lp-nav-icon { transform: scale(1.06); }
+        .lp-nav-label {
+          background: var(--marrom-esc);
+          color: var(--creme);
+          font-size: 12px;
+          font-weight: 700;
+          padding: 6px 16px;
+          border-radius: 50px;
+          text-align: center;
+          font-family: 'Noto Sans', sans-serif;
+        }
+
+        /* ══════════════════════════════════════
+           CTA CARDS
+        ══════════════════════════════════════ */
+        .lp-cta-card {
+          background: var(--marrom-esc);
+          border-radius: 14px;
+          padding: 22px 26px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          text-decoration: none;
+          transition: transform 0.15s, background 0.15s;
+          height: 100%;
+        }
+        .lp-cta-card:hover { transform: translateY(-2px); background: #2e1a0f; }
+        .lp-cta-label {
+          font-size: 17px;
+          font-weight: 800;
+          color: var(--creme);
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-cta-icon { font-size: 30px; opacity: 0.85; }
+
+        /* ══════════════════════════════════════
+           ACTION CARDS (Doação / Voluntário)
+        ══════════════════════════════════════ */
+        .lp-action-card {
+          background: var(--laranja);
+          border-radius: 14px;
+          padding: 22px 26px;
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          text-decoration: none;
+          transition: transform 0.15s;
+          height: 100%;
+        }
+        .lp-action-card:hover { transform: translateY(-2px); }
+        .lp-action-icon { font-size: 38px; flex-shrink: 0; }
+        .lp-action-title {
+          font-size: 16px;
+          font-weight: 800;
+          color: var(--marrom-esc);
+          margin-bottom: 4px;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-action-desc {
+          font-size: 13px;
+          color: var(--marrom);
+          line-height: 1.5;
+          font-family: 'Noto Sans', sans-serif;
+          margin: 0;
+        }
+
+        /* ══════════════════════════════════════
+           PET & ABRIGO CARDS
+        ══════════════════════════════════════ */
+        .lp-card {
+          background: var(--laranja);
+          border-radius: 14px;
+          overflow: hidden;
+          transition: transform 0.2s;
+          height: 100%;
+        }
+        .lp-card:hover { transform: translateY(-3px); }
+        .lp-card-img {
+          width: 100%;
+          height: 175px;
+          background: var(--laranja-md);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: rgba(255,255,255,0.3);
+          font-size: 12px;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-card-body { padding: 14px 16px 18px; }
+        .lp-card-name {
+          font-size: 16px;
+          font-weight: 800;
+          color: var(--marrom-esc);
+          margin-bottom: 2px;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-card-sub {
+          font-size: 13px;
+          color: var(--marrom);
+          margin-bottom: 12px;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-card-btn {
+          display: inline-block;
+          background: var(--marrom-esc);
+          color: var(--creme) !important;
+          font-size: 13px;
+          font-weight: 700;
+          padding: 8px 22px;
+          border-radius: 50px;
+          text-decoration: none;
+          font-family: 'Noto Sans', sans-serif;
+          transition: background 0.15s;
+        }
+        .lp-card-btn:hover { background: #2e1a0f; }
+
+        /* ══════════════════════════════════════
+           PASSO CARDS (Como funciona)
+        ══════════════════════════════════════ */
+        .lp-passo-card {
+          background: var(--creme);
+          border-radius: 16px;
+          padding: 40px 24px 36px;
+          height: 100%;
+        }
+        .lp-passo-num {
+          font-size: 52px;
+          font-weight: 900;
+          color: var(--laranja);
+          line-height: 1;
+          margin-bottom: 14px;
+          letter-spacing: -2px;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-passo-title {
+          font-size: 18px;
+          font-weight: 800;
+          color: var(--marrom-esc);
+          margin-bottom: 8px;
+          font-family: 'Noto Sans', sans-serif;
+        }
+        .lp-passo-desc {
+          font-size: 14px;
+          color: var(--marrom);
+          line-height: 1.6;
+          margin: 0;
+          font-family: 'Noto Sans', sans-serif;
+        }
+
+        /* ══════════════════════════════════════
+           RESPONSIVE / MOBILE
+        ══════════════════════════════════════ */
+        @media (max-width: 991.98px) {
+          .lp-hero-img-col { display: none !important; }
+          .lp-hero { min-height: auto; padding-bottom: 60px; }
+        }
+        @media (max-width: 575.98px) {
+          .lp-nav-grid { padding: 20px 12px; }
+          .lp-nav-icon { width: 60px; height: 60px; font-size: 26px; }
         }
       `}</style>
 
-      {/* ── Hero (com navbar dentro) ── */}
-      <section className="hero">
-        <LandingNav />
+      <div className="landing-root">
 
-        <div className="deco-circle-outline" style={{ width: 44, height: 44, top: '22%', left: '46%' }} />
-        <svg className="deco-squiggle" style={{ top: '20%', left: '6%' }} width="70" height="28" viewBox="0 0 70 28">
-          <path d="M4 22 Q15 4 25 14 Q36 24 47 14 Q58 4 66 10" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-        </svg>
-        <svg className="deco-squiggle" style={{ bottom: '12%', right: '26%' }} width="100" height="48" viewBox="0 0 80 28">
-          <path d="M4 22 Q16 4 28 14 Q40 24 52 14 Q64 4 76 10" fill="none" stroke="#7B4A2D" strokeWidth="3" strokeLinecap="round"/>
-        </svg>
-        {[[0,0],[1,0],[2,0],[0,1],[1,1],[0,2],[1,2],[2,2],[0,3],[1,3],[0,4],[1,4]].map(([col,row],i) => (
-          <div key={i} className="tri-down" style={{ top: `${42+row*5}%`, left: `${50+col*3}%` }} />
-        ))}
-        {[[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[3,1],[0,2],[1,2],[2,2]].map(([col,row],i) => (
-          <div key={`tr${i}`} className="tri-right-deco" style={{ bottom: `${22+row*5}%`, left: `${3+col*3.2}%` }} />
-        ))}
+        {/* ══════════════════════════════════════
+            HERO
+        ══════════════════════════════════════ */}
+        <section className="lp-hero">
+          <LandingNav />
 
-        <div className="container-xxl mx-auto px-4 py-5 d-flex align-items-center justify-content-between gap-4" style={{ position: 'relative', zIndex: 2 }}>
-          <div className="hero-left-anim" style={{ flex: 1, maxWidth: 500 }}>
-            <h1 className="hero-title mb-3">
-              Adotar salva vidas.<br />
-              Comece sua história hoje!
-            </h1>
-            <p className="hero-subtitle mb-4">Adote um pet ou apoie um abrigo parceiro.</p>
-            <div className="d-flex gap-3 flex-wrap">
-              <Link to="/home" className="hero-btn-primary">Adotar</Link>
-              <a href="#como-funciona" className="hero-btn-secondary">Como ajudar?</a>
-            </div>
-          </div>
-          <div className="hero-right hero-right-anim">
-            <div className="hero-circle" />
-            <div className="blob-wrapper">
-              <div className="blob-shape blob-inner" />
-              <img src={cachorro} alt="cachorro" style={{ position: 'absolute', width: '58%', height: 'auto', zIndex: 3 }} />
-            </div>
-          </div>
-        </div>
-      </section>
+          {/* Decorative elements */}
+          <div className="lp-deco-circle" style={{ width: 40, height: 40, top: '22%', left: '44%' }} />
+          <svg className="lp-deco-wave" style={{ top: '20%', left: '5%' }} width="72" height="30" viewBox="0 0 72 30">
+            <path d="M4 23 Q16 5 27 15 Q38 25 49 15 Q60 5 68 11"
+              fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
+          </svg>
+          <svg className="lp-deco-wave" style={{ bottom: '10%', right: '24%', opacity: 0.4 }} width="90" height="36" viewBox="0 0 80 28">
+            <path d="M4 22 Q16 4 28 14 Q40 24 52 14 Q64 4 76 10"
+              fill="none" stroke="#7B4A2D" strokeWidth="3" strokeLinecap="round"/>
+          </svg>
+          {/* triangles down */}
+          {[[0,0],[1,0],[2,0],[0,1],[1,1],[0,2],[1,2],[2,2],[0,3],[1,3],[0,4],[1,4]].map(([col,row],i) => (
+            <div key={`td${i}`} className="lp-tri-down"
+              style={{ top: `${42+row*5}%`, left: `${48+col*3}%` }} />
+          ))}
+          {/* triangles right */}
+          {[[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[3,1],[0,2],[1,2],[2,2]].map(([col,row],i) => (
+            <div key={`tr${i}`} className="lp-tri-right"
+              style={{ bottom: `${22+row*5}%`, left: `${3+col*3.2}%` }} />
+          ))}
 
-      {/* ── Navegue ── */}
-      <section className="py-5" style={{ background: '#F5ECD7' }}>
-        <div className="container-xxl mx-auto px-4">
-          <div className="section-header mb-4">
-            <span className="section-header-title">Navegue</span>
-            <div className="section-header-line" />
-            <div className="section-header-arrow">→</div>
-          </div>
-          <div className="nav-grid">
-            {navItems.map((item, i) => (
-              <a href={item.to} className="nav-item" key={i}>
-                <div className="nav-item-icon">{item.emoji}</div>
-                <span className="nav-item-label">{item.label}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
+          <div className="container-xxl px-4 py-5" style={{ position: 'relative', zIndex: 2 }}>
+            <div className="row align-items-center" style={{ minHeight: 'calc(100vh - 88px)' }}>
 
-      {/* ── CTA Cadastro + Ações ── */}
-      <section className="pb-5" style={{ background: '#F5ECD7' }}>
-        <div className="container-xxl mx-auto px-4">
-          <div className="row g-3 mb-3">
-            <div className="col-md-6">
-              <Link to="/cadastro" className="cta-card h-100">
-                <span className="cta-card-label">Cadastre-se como adotante</span>
-                <span className="cta-card-icon">🐾</span>
-              </Link>
-            </div>
-            <div className="col-md-6">
-              <Link to="/cadastro" className="cta-card h-100">
-                <span className="cta-card-label">Cadastre-se como abrigo</span>
-                <span className="cta-card-icon">🏠</span>
-              </Link>
-            </div>
-          </div>
-          <div className="row g-3">
-            <div className="col-md-6">
-              <a href="#" className="action-card h-100">
-                <span className="action-card-icon">🤲</span>
-                <div>
-                  <div className="action-card-title">Faça uma doação</div>
-                  <div className="action-card-desc">Ajude-nos a continuar na luta contra o abandono animal</div>
+              {/* Left: text */}
+              <div className="col-lg-6 lp-hero-left">
+                <h1 className="lp-hero-title">
+                  Adotar salva vidas.<br />
+                  Comece sua história hoje!
+                </h1>
+                <p className="lp-hero-subtitle">Adote um pet ou apoie um abrigo parceiro.</p>
+                <div className="d-flex gap-3 flex-wrap">
+                  <Link to="/home" className="lp-hero-btn-primary">Adotar</Link>
+                  <a href="#como-funciona" className="lp-hero-btn-secondary">Como ajudar?</a>
                 </div>
-              </a>
-            </div>
-            <div className="col-md-6">
-              <a href="#" className="action-card h-100">
-                <span className="action-card-icon">🙋</span>
-                <div>
-                  <div className="action-card-title">Quero me voluntariar</div>
-                  <div className="action-card-desc">Torne-se voluntário em um abrigo próximo à você e ajude na causa animal</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+              </div>
 
-      {/* ── Pets ── */}
-      <section id="pets" className="pb-5" style={{ background: '#F5ECD7' }}>
-        <div className="container-xxl mx-auto px-4">
-          <div className="section-header mb-4">
-            <span className="section-header-title">Conheça alguns dos nossos pets</span>
-            <div className="section-header-line" />
-            <div className="section-header-arrow">→</div>
+              {/* Right: blob + dog image */}
+              <div className="col-lg-6 lp-hero-img-col lp-hero-right">
+                <div className="lp-hero-circle-bg" />
+                <div className="lp-blob-wrapper">
+                  <div className="lp-blob" />
+                  <img src={cachorro} alt="cachorro" className="lp-dog-img" />
+                </div>
+              </div>
+
+            </div>
           </div>
-          <div className="row g-4">
-            {pets.map((p, i) => (
-              <div className="col-md-4" key={i}>
-                <div className="pet-card">
-                  <div className="card-img-placeholder">foto</div>
-                  <div className="p-3">
-                    <div className="card-name">{p.nome}</div>
-                    <div className="card-sub">{p.raca}</div>
-                    <Link to="/home" className="card-btn">Conhecer</Link>
+        </section>
+
+        {/* ══════════════════════════════════════
+            NAVEGUE
+        ══════════════════════════════════════ */}
+        <section className="py-5" style={{ background: 'var(--creme)' }}>
+          <div className="container-xxl px-4">
+            <div className="lp-section-header">
+              <span className="lp-section-title">Navegue</span>
+              <div className="lp-section-line" />
+              <div className="lp-section-arrow">→</div>
+            </div>
+
+            <div className="lp-nav-grid">
+              <div className="row g-3 justify-content-center">
+                {navItems.map((item, i) => (
+                  <div className="col-6 col-sm-3" key={i}>
+                    <a href={item.to} className="lp-nav-item">
+                      <div className="lp-nav-icon">{item.emoji}</div>
+                      <span className="lp-nav-label">{item.label}</span>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════
+            CTA: Cadastro + Ações
+        ══════════════════════════════════════ */}
+        <section className="pb-5" style={{ background: 'var(--creme)' }}>
+          <div className="container-xxl px-4">
+            {/* Cadastro CTAs */}
+            <div className="row g-3 mb-3">
+              <div className="col-12 col-md-6">
+                <Link to="/cadastro" className="lp-cta-card">
+                  <span className="lp-cta-label">Cadastre-se como adotante</span>
+                  <span className="lp-cta-icon">🐾</span>
+                </Link>
+              </div>
+              <div className="col-12 col-md-6">
+                <Link to="/cadastro" className="lp-cta-card">
+                  <span className="lp-cta-label">Cadastre-se como abrigo</span>
+                  <span className="lp-cta-icon">🏠</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Action cards */}
+            <div className="row g-3">
+              <div className="col-12 col-md-6">
+                <a href="#" className="lp-action-card">
+                  <span className="lp-action-icon">🤲</span>
+                  <div>
+                    <div className="lp-action-title">Faça uma doação</div>
+                    <p className="lp-action-desc">Ajude-nos a continuar na luta contra o abandono animal</p>
+                  </div>
+                </a>
+              </div>
+              <div className="col-12 col-md-6">
+                <a href="#" className="lp-action-card">
+                  <span className="lp-action-icon">🙋</span>
+                  <div>
+                    <div className="lp-action-title">Quero me voluntariar</div>
+                    <p className="lp-action-desc">Torne-se voluntário em um abrigo próximo à você e ajude na causa animal</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════
+            PETS
+        ══════════════════════════════════════ */}
+        <section id="pets" className="pb-5" style={{ background: 'var(--creme)' }}>
+          <div className="container-xxl px-4">
+            <div className="lp-section-header">
+              <span className="lp-section-title">Conheça alguns dos nossos pets</span>
+              <div className="lp-section-line" />
+              <div className="lp-section-arrow">→</div>
+            </div>
+
+            <div className="row g-4">
+              {pets.map((p, i) => (
+                <div className="col-12 col-md-6 col-lg-4" key={i}>
+                  <div className="lp-card">
+                    <div className="lp-card-img">foto</div>
+                    <div className="lp-card-body">
+                      <div className="lp-card-name">{p.nome}</div>
+                      <div className="lp-card-sub">{p.raca}</div>
+                      <Link to="/home" className="lp-card-btn">Conhecer</Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Abrigos ── */}
-      <section id="abrigos" className="pb-5" style={{ background: '#F5ECD7' }}>
-        <div className="container-xxl mx-auto px-4">
-          <div className="section-header mb-4">
-            <span className="section-header-title">Conheça alguns dos nossos abrigos</span>
-            <div className="section-header-line" />
-            <div className="section-header-arrow">→</div>
-          </div>
-          <div className="row g-4">
-            {abrigos.map((a, i) => (
-              <div className="col-md-4" key={i}>
-                <div className="abrigo-card">
-                  <div className="card-img-placeholder">foto</div>
-                  <div className="p-3">
-                    <div className="card-name">{a.nome}</div>
-                    <div className="card-sub">{a.cidade}</div>
-                    <Link to="/home" className="card-btn">Conhecer</Link>
+        {/* ══════════════════════════════════════
+            ABRIGOS
+        ══════════════════════════════════════ */}
+        <section id="abrigos" className="pb-5" style={{ background: 'var(--creme)' }}>
+          <div className="container-xxl px-4">
+            <div className="lp-section-header">
+              <span className="lp-section-title">Conheça alguns dos nossos abrigos</span>
+              <div className="lp-section-line" />
+              <div className="lp-section-arrow">→</div>
+            </div>
+
+            <div className="row g-4">
+              {abrigos.map((a, i) => (
+                <div className="col-12 col-md-6 col-lg-4" key={i}>
+                  <div className="lp-card">
+                    <div className="lp-card-img">foto</div>
+                    <div className="lp-card-body">
+                      <div className="lp-card-name">{a.nome}</div>
+                      <div className="lp-card-sub">{a.cidade}</div>
+                      <Link to="/home" className="lp-card-btn">Conhecer</Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Como funciona ── */}
-      <section id="como-funciona" className="py-5" style={{ background: '#E8A87C' }}>
-        <div className="container-xxl mx-auto px-4">
-          <div className="section-header mb-4">
-            <span className="section-header-title section-header-title-light">Como funciona?</span>
-            <div className="section-header-line section-header-line-light" />
-            <div className="section-header-arrow">→</div>
-          </div>
-          <div className="row g-4">
-            {passos.map((p, i) => (
-              <div className="col-md-4" key={i}>
-                <div className="passo-card">
-                  <div className="passo-num">{p.num}</div>
-                  <div className="passo-titulo">{p.titulo}</div>
-                  <p className="passo-desc mb-0">{p.desc}</p>
+        {/* ══════════════════════════════════════
+            COMO FUNCIONA
+        ══════════════════════════════════════ */}
+        <section id="como-funciona" className="py-5" style={{ background: 'var(--laranja)' }}>
+          <div className="container-xxl px-4">
+            <div className="lp-section-header">
+              <span className="lp-section-title lp-section-title--light">Como funciona?</span>
+              <div className="lp-section-line lp-section-line--light" />
+              <div className="lp-section-arrow">→</div>
+            </div>
+
+            <div className="row g-4">
+              {passos.map((p, i) => (
+                <div className="col-12 col-md-4" key={i}>
+                  <div className="lp-passo-card">
+                    <div className="lp-passo-num">{p.num}</div>
+                    <div className="lp-passo-title">{p.titulo}</div>
+                    <p className="lp-passo-desc">{p.desc}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <Footer />
+        <Footer />
+
+      </div>
     </>
   )
 }
