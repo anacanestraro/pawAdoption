@@ -9,7 +9,8 @@ export const listarAnimais = async (req: Request, res: Response) => {
         const animais = await prisma.animal.findMany({
             where: {
                 deleted_at: null
-            }
+            },
+            include: { fotos: true }
         });
         return res.status(200).json(animais);
     } catch (error) {
