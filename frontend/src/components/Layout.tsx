@@ -1,13 +1,15 @@
 import { Outlet } from 'react-router-dom'
-import { Navbar } from './Navbar'
+import { AppNavbar } from './AppNavbar'
+import { AppFooter } from './AppFooter'
 
 export const Layout = () => {
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f3fa' }}>
-      <Navbar />
-      <main style={{ padding: '32px 40px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <AppNavbar />
+      <main style={{ flex: 1 }}>
         <Outlet />
       </main>
+      <AppFooter variant="compact" />
     </div>
   )
 }
