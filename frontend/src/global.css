@@ -1,0 +1,148 @@
+/* ═══════════════════════════════════════════════════════
+   global.css — PawAdoption
+   Variáveis de tema, reset e estilos base.
+   Importar em main.tsx (substitui index.css e App.css).
+═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Tema Light (padrão) ── */
+:root,
+[data-theme="light"] {
+  /* Paleta PawAdoption */
+  --cream:     #FBF7EE;
+  --marrom:    #2D1B14;
+  --marrom-m:  #6B4226;
+  --laranja:   #E8A87C;
+  --laranja-d: #C07040;
+  --verde:     #4A6741;
+  --verde-l:   #EAF3DE;
+  --azul:      #175EA8;
+  --azul-700:  #114a85;
+  --azul-300:  #5b94d4;
+  --azul-l:    #DCE9F7;
+  --azul-50:   #F0F6FC;
+  --paper:     #FFFFFF;
+  --line:      #EDE5D8;
+  --line-2:    #D5C8B8;
+
+  /* Design system v2 (Landing) */
+  --blue:          #175EA8;
+  --blue-700:      #114a85;
+  --blue-300:      #5b94d4;
+  --blue-100:      #DCE9F7;
+  --blue-50:       #F0F6FC;
+  --orange:        #D34C25;
+  --orange-700:    #B53D18;
+  --orange-100:    #FBDDD0;
+  --orange-50:     #FEF1EB;
+  --cream-2:       #FFEFD9;
+  --ink:           #1A2238;
+  --ink-2:         #4A5573;
+  --ink-3:         #8090AD;
+  --shadow-sm:     0 4px 0 rgba(23,94,168,0.08);
+  --shadow-md:     0 8px 24px -6px rgba(23,94,168,0.18), 0 2px 0 rgba(23,94,168,0.06);
+  --shadow-orange: 0 6px 0 rgba(181,61,24,0.35), 0 12px 24px -6px rgba(211,76,37,0.4);
+  --shadow-pop:    0 10px 30px -8px rgba(23,94,168,0.25);
+  --display:       'Baloo 2', 'Nunito', system-ui, sans-serif;
+  --sans:          'Nunito', system-ui, sans-serif;
+}
+
+/* ── Tema Dark ── */
+[data-theme="dark"] {
+  --cream:     #0E1626;
+  --marrom:    #F0E8DC;
+  --marrom-m:  #C4A882;
+  --laranja:   #E8A87C;
+  --laranja-d: #C07040;
+  --verde:     #5C8A50;
+  --verde-l:   #1A2E18;
+  --azul:      #4D8FD9;
+  --azul-700:  #3877BC;
+  --azul-300:  #6FA3DF;
+  --azul-l:    #1F3354;
+  --azul-50:   #182842;
+  --paper:     #1A2438;
+  --line:      #2A3552;
+  --line-2:    #3A4868;
+
+  /* Design system v2 (Landing) */
+  --blue:          #4D8FD9;
+  --blue-700:      #3877BC;
+  --blue-300:      #6FA3DF;
+  --blue-100:      #1F3354;
+  --blue-50:       #182842;
+  --orange:        #FF7A4D;
+  --orange-700:    #E8623A;
+  --orange-100:    #4A2818;
+  --orange-50:     #2E1A11;
+  --cream-2:       #18223A;
+  --ink:           #F0F4FA;
+  --ink-2:         #B8C2D6;
+  --ink-3:         #7E8AA3;
+  --shadow-sm:     0 4px 0 rgba(0,0,0,0.4);
+  --shadow-md:     0 8px 24px -6px rgba(0,0,0,0.5), 0 2px 0 rgba(0,0,0,0.4);
+  --shadow-orange: 0 6px 0 rgba(232,98,58,0.4), 0 12px 24px -6px rgba(255,122,77,0.4);
+  --shadow-pop:    0 10px 30px -8px rgba(0,0,0,0.6);
+}
+
+/* ── Base ── */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--marrom);
+  background-color: var(--cream);
+  background-repeat: repeat;
+  background-size: 120px 120px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+}
+
+#root {
+  /* Remove o padding/max-width do App.css original */
+  max-width: unset;
+  padding: 0;
+  text-align: unset;
+  display: block;
+}
+
+a { color: inherit; }
+
+::selection {
+  background: var(--laranja);
+  color: var(--marrom);
+}
+
+/* ── Utilitário de padding lateral wide ── */
+.px-wide {
+  padding-left:  80px !important;
+  padding-right: 80px !important;
+}
+
+@media (max-width: 991.98px) {
+  .px-wide { padding-left: 24px !important; padding-right: 24px !important; }
+}
+@media (max-width: 575.98px) {
+  .px-wide { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+/* ── Animações globais ── */
+.fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
