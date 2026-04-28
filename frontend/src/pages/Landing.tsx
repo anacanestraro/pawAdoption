@@ -715,39 +715,6 @@ export const Landing = () => {
   return (
     <I18nCtx.Provider value={{ lang, t, setLang }}>
       <>
-        <style>{`
-          :root, [data-theme="light"] {
-            --blue: #175EA8; --blue-700: #114a85; --blue-300: #5b94d4;
-            --blue-100: #DCE9F7; --blue-50: #F0F6FC;
-            --orange: #D34C25; --orange-700: #B53D18;
-            --orange-100: #FBDDD0; --orange-50: #FEF1EB;
-            --cream: #FFF9F1; --cream-2: #FFEFD9;
-            --paper: #FFFFFF; --ink: #1A2238;
-            --ink-2: #4A5573; --ink-3: #8090AD;
-            --line: #E6EBF3; --line-2: #D5DCE8;
-            --shadow-sm: 0 4px 0 rgba(23,94,168,0.08);
-            --shadow-md: 0 8px 24px -6px rgba(23,94,168,0.18), 0 2px 0 rgba(23,94,168,0.06);
-            --shadow-orange: 0 6px 0 rgba(181,61,24,0.35), 0 12px 24px -6px rgba(211,76,37,0.4);
-            --shadow-pop: 0 10px 30px -8px rgba(23,94,168,0.25);
-            --display: 'Baloo 2', 'Nunito', system-ui, sans-serif;
-            --sans: 'Nunito', system-ui, sans-serif;
-          }
-          [data-theme="dark"] {
-            --blue: #4D8FD9; --blue-700: #3877BC; --blue-300: #6FA3DF;
-            --blue-100: #1F3354; --blue-50: #182842;
-            --orange: #FF7A4D; --orange-700: #E8623A;
-            --orange-100: #4A2818; --orange-50: #2E1A11;
-            --cream: #0E1626; --cream-2: #18223A;
-            --paper: #1A2438; --ink: #F0F4FA;
-            --ink-2: #B8C2D6; --ink-3: #7E8AA3;
-            --line: #2A3552; --line-2: #3A4868;
-            --shadow-sm: 0 4px 0 rgba(0,0,0,0.4);
-            --shadow-md: 0 8px 24px -6px rgba(0,0,0,0.5), 0 2px 0 rgba(0,0,0,0.4);
-            --shadow-orange: 0 6px 0 rgba(232,98,58,0.4), 0 12px 24px -6px rgba(255,122,77,0.4);
-            --shadow-pop: 0 10px 30px -8px rgba(0,0,0,0.6);
-          }
-        `}</style>
-
         <AppNavbar lang={lang} setLang={setLang} />
 
         <main>
