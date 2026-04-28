@@ -39,6 +39,12 @@ export interface Abrigo extends Usuario {
     deleted_at?: Date;
 }
 
+export interface AnimalFoto {
+  id: number
+  url_foto: string
+  validada: boolean
+}
+
 export interface Animal {
     id: number;
     nome: string;
@@ -52,6 +58,7 @@ export interface Animal {
     abrigo_id?: number;
     adotante_id?: number
     lar_temporario?: number;
+    fotos?: AnimalFoto[]
     created_at: Date;
     deleted_at?: Date;
 }
