@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import cachorro from '../assets/cachorro.png'
 import api from '../api/api'
 
 type TipoUsuario = 'ADOTANTE' | 'ABRIGO'
@@ -15,6 +14,7 @@ export const Cadastro = () => {
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [showSenha, setShowSenha] = useState(false)
 
   // Campos Adotante
   const [cpf, setCpf] = useState('')
@@ -40,7 +40,13 @@ export const Cadastro = () => {
           lar_temporario: larTemporario,
         })
       } else {
-        await api.post('/abrigos/cadastrar', { nome, email, senha, cnpj, razao_social: razaoSocial })
+        await api.post('/abrigos/cadastrar', {
+          nome,
+          email,
+          senha,
+          cnpj,
+          razao_social: razaoSocial,
+        })
       }
       navigate('/login')
     } catch {
@@ -51,230 +57,497 @@ export const Cadastro = () => {
   }
 
   return (
-    <div className="min-vh-100 d-flex flex-column flex-lg-row"
-      style={{ background: '#F5ECD7' }}>
+    <>
       <style>{`
-        .blob-shape {
-          border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%;
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+        :root {
+          --blue:          #175EA8;
+          --blue-700:      #114a85;
+          --blue-100:      #DCE9F7;
+          --blue-50:       #F0F6FC;
+          --orange:        #D34C25;
+          --orange-700:    #B53D18;
+          --orange-100:    #FBDDD0;
+          --cream:         #FFF9F1;
+          --paper:         #FFFFFF;
+          --ink:           #1A2238;
+          --ink-2:         #4A5573;
+          --ink-3:         #8090AD;
+          --line:          #E6EBF3;
+          --shadow-orange: 0 6px 0 rgba(181,61,24,0.35), 0 12px 24px -6px rgba(211,76,37,0.4);
         }
-        .blob-wrapper {
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        .auth-page {
+          min-height: 100vh;
+          display: flex;
+          font-family: 'Nunito', system-ui, sans-serif;
+          background-color: var(--cream);
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><g fill='%23175EA8' fill-opacity='0.04'><ellipse cx='30' cy='40' rx='5' ry='6.5'/><ellipse cx='42' cy='32' rx='4.5' ry='6'/><ellipse cx='54' cy='32' rx='4.5' ry='6'/><ellipse cx='66' cy='40' rx='5' ry='6.5'/><path d='M40 58c0-7 4-12 8-12s8 5 8 12c0 5-3.5 7-6 7s-2 1.5-3 1.5S46 65 43 65s-3-2-3-7z'/><ellipse cx='110' cy='112' rx='4' ry='5.5'/><ellipse cx='119' cy='106' rx='3.5' ry='5'/><ellipse cx='128' cy='106' rx='3.5' ry='5'/><ellipse cx='137' cy='112' rx='4' ry='5.5'/><path d='M118 126c0-5.5 3-9.5 6-9.5s6 4 6 9.5c0 4-2.5 5.5-4.5 5.5s-1.5 1-2 1-1.5-1-3-1-2.5-1.5-2.5-5.5z'/></g></svg>");
+          background-repeat: repeat;
+          background-size: 160px 160px;
+          color: var(--ink);
+        }
+
+        /* ── Painel esquerdo ── */
+        .auth-left {
           display: none;
+          flex: 1;
+          background: var(--orange);
+          position: relative;
+          overflow: hidden;
           align-items: center;
           justify-content: center;
-          padding: 2rem;
-          flex: 1;
-          margin-left: 100px;
-          position: relative;
+          flex-direction: column;
+          gap: 32px;
+          padding: 60px;
         }
-        @media (min-width: 992px) {
-          .blob-wrapper { display: flex; }
-        }
-        .blob-inner {
-          background: #D4845A;
-          width: clamp(300px, 35vw, 700px);
-          height: clamp(300px, 35vw, 700px);
-        }
-        .cadastro-wrapper {
+        @media (min-width: 992px) { .auth-left { display: flex; } }
+
+        .auth-left-blob {
+          width: clamp(240px, 26vw, 380px);
+          height: clamp(240px, 26vw, 380px);
+          background: rgba(255,255,255,0.15);
+          border-radius: 42% 58% 52% 48% / 48% 42% 58% 52%;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 1.5rem;
-          width: 100%;
+          font-size: clamp(90px, 12vw, 150px);
+          position: relative; z-index: 1;
+        }
+        .auth-left-deco1 {
+          position: absolute; width: 280px; height: 280px;
+          border-radius: 50%; background: rgba(255,255,255,0.08);
+          top: -70px; right: -70px;
+        }
+        .auth-left-deco2 {
+          position: absolute; width: 180px; height: 180px;
+          border-radius: 50%; background: rgba(255,255,255,0.08);
+          bottom: -50px; left: -50px;
+        }
+        .auth-left-text {
+          position: relative; z-index: 1;
+          text-align: center; color: white;
+        }
+        .auth-left-text h2 {
+          font-family: 'Baloo 2', sans-serif;
+          font-size: clamp(22px, 2.2vw, 32px);
+          font-weight: 800; margin: 0 0 10px;
+          letter-spacing: -0.02em;
+        }
+        .auth-left-text p {
+          font-size: 14px; opacity: 0.85; margin: 0;
+          max-width: 280px; line-height: 1.6;
+        }
+
+        /* Tipo cards decorativos no painel esquerdo */
+        .auth-tipo-cards {
+          display: flex; gap: 14px;
+          position: relative; z-index: 1;
+        }
+        .auth-tipo-card {
+          background: rgba(255,255,255,0.18);
+          border-radius: 18px; padding: 16px 20px;
+          color: white; text-align: center;
+          backdrop-filter: blur(8px); min-width: 110px;
+        }
+        .auth-tipo-card .icon { font-size: 32px; margin-bottom: 8px; }
+        .auth-tipo-card .label {
+          font-family: 'Baloo 2', sans-serif;
+          font-size: 14px; font-weight: 800;
+        }
+
+        /* ── Painel direito — formulário ── */
+        .auth-right {
+          flex: 1;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 32px 24px;
+          overflow-y: auto;
         }
         @media (min-width: 992px) {
-          .cadastro-wrapper {
-            padding: 3rem;
-            width: 1020px;
-          }
+          .auth-right { max-width: 560px; padding: 48px 56px; align-items: center; }
         }
-        .cadastro-card {
+
+        .auth-form-wrap {
           width: 100%;
-          max-width: 505px;
-          background: #E8A87C;
-          border-radius: 18px;
+          max-width: 420px;
+          padding: 8px 0;
         }
-        .cadastro-card .form-control {
-          background: #fff6e2;
-          border: none;
-          color: #7B4A2D;
-          font-size: 15px;
+
+        /* Logo */
+        .auth-logo {
+          display: flex; align-items: center; gap: 10px;
+          text-decoration: none; margin-bottom: 28px;
         }
-        .cadastro-card .form-control:focus {
-          background: #fff6e2;
-          box-shadow: 0 0 0 2.5px #7B4A2D;
-          color: #7B4A2D;
+        .auth-logo-icon {
+          width: 40px; height: 40px; border-radius: 12px;
+          background: var(--blue); display: grid; place-items: center;
+          font-size: 20px; box-shadow: 0 4px 0 var(--blue-700);
+          transform: rotate(-6deg); flex-shrink: 0;
         }
-        .cadastro-card .form-label {
-          color: #7B4A2D;
-          font-weight: 600;
-          font-size: 15px;
+        .auth-logo-text {
+          font-family: 'Baloo 2', sans-serif; font-size: 22px;
+          font-weight: 800; color: var(--blue); letter-spacing: -0.02em;
         }
-        .cadastro-card .form-check-label {
-          color: #7B4A2D;
-          font-size: 15px;
+        .auth-logo-text span { color: var(--orange); }
+
+        /* Heading */
+        .auth-heading {
+          font-family: 'Baloo 2', sans-serif;
+          font-size: clamp(24px, 3vw, 32px);
+          font-weight: 800; color: var(--ink);
+          letter-spacing: -0.02em; margin: 0 0 4px;
         }
-        .cadastro-card .form-check-input:checked {
-          background-color: #7B4A2D;
-          border-color: #7B4A2D;
+        .auth-subheading {
+          font-size: 14px; color: var(--ink-2);
+          margin: 0 0 24px; font-weight: 500;
+        }
+
+        /* Toggle tipo */
+        .tipo-toggle {
+          display: flex;
+          background: var(--blue-50);
+          border: 2px solid var(--blue-100);
+          border-radius: 14px;
+          padding: 4px;
+          margin-bottom: 24px;
+          gap: 4px;
         }
         .tipo-btn {
-          flex: 1;
-          padding: 10px;
-          border: 2px solid #7B4A2D;
+          flex: 1; padding: 10px 8px;
+          border-radius: 10px; border: none;
+          font-family: 'Baloo 2', sans-serif;
+          font-size: 14px; font-weight: 800;
+          cursor: pointer; transition: all .2s;
           background: transparent;
-          color: #7B4A2D;
-          font-weight: 700;
-          font-size: 15px;
-          cursor: pointer;
-          transition: all 0.15s;
-          font-family: inherit;
+          color: var(--ink-2);
+          display: flex; align-items: center;
+          justify-content: center; gap: 6px;
         }
-        .tipo-btn:first-child { border-radius: 8px 0 0 8px; }
-        .tipo-btn:last-child  { border-radius: 0 8px 8px 0; }
         .tipo-btn.active {
-          background: #7B4A2D;
-          color: #F5ECD7;
+          background: var(--blue); color: white;
+          box-shadow: 0 3px 0 var(--blue-700);
         }
-        .tipo-btn:not(.active):hover { background: rgba(123,74,45,0.1); }
-        .link-login {
-          color: #3D2314;
-          font-weight: 900;
-          text-decoration: none;
+        .tipo-btn:not(.active):hover {
+          background: var(--blue-100); color: var(--blue);
         }
-        .link-login:hover { text-decoration: underline; color: #3D2314; }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(12px); }
+
+        /* Campos */
+        .auth-field { margin-bottom: 14px; }
+        .auth-label {
+          display: block; font-size: 12px; font-weight: 700;
+          color: var(--ink-2); margin-bottom: 6px; letter-spacing: .02em;
+        }
+        .auth-input-wrap { position: relative; }
+        .auth-input {
+          width: 100%; padding: 12px 16px;
+          border-radius: 12px; border: 2px solid var(--line);
+          background: var(--paper);
+          font-size: 14px; font-family: 'Nunito', sans-serif;
+          font-weight: 600; color: var(--ink); outline: none;
+          transition: border-color .15s, box-shadow .15s;
+        }
+        .auth-input:focus {
+          border-color: var(--blue);
+          box-shadow: 0 0 0 3px rgba(23,94,168,0.12);
+        }
+        .auth-input.has-toggle { padding-right: 46px; }
+        .auth-toggle-btn {
+          position: absolute; right: 12px; top: 50%;
+          transform: translateY(-50%);
+          background: none; border: none; cursor: pointer;
+          font-size: 16px; color: var(--ink-3); padding: 4px;
+        }
+
+        /* Checkbox custom */
+        .auth-check {
+          display: flex; align-items: flex-start; gap: 10px;
+          margin-bottom: 14px; cursor: pointer;
+        }
+        .auth-check input[type="checkbox"] {
+          width: 18px; height: 18px; margin-top: 1px;
+          accent-color: var(--blue); cursor: pointer; flex-shrink: 0;
+        }
+        .auth-check-text {
+          font-size: 13px; color: var(--ink-2); font-weight: 600; line-height: 1.4;
+        }
+
+        /* Separador de grupo de campos */
+        .auth-section-label {
+          font-size: 11px; font-weight: 800;
+          color: var(--ink-3); text-transform: uppercase;
+          letter-spacing: .08em; margin: 18px 0 12px;
+          padding-bottom: 8px; border-bottom: 2px solid var(--line);
+        }
+
+        /* Erro */
+        .auth-error {
+          display: flex; align-items: center; gap: 8px;
+          padding: 12px 16px; border-radius: 12px;
+          background: var(--orange-100); color: var(--orange);
+          font-size: 13px; font-weight: 700; margin-bottom: 14px;
+        }
+
+        /* Botão */
+        .auth-btn-primary {
+          width: 100%; padding: 14px;
+          border-radius: 999px; border: none;
+          background: var(--orange); color: white;
+          font-family: 'Baloo 2', sans-serif;
+          font-size: 16px; font-weight: 800; cursor: pointer;
+          box-shadow: var(--shadow-orange);
+          transition: transform .15s, opacity .15s;
+          margin-top: 4px;
+        }
+        .auth-btn-primary:hover:not(:disabled) { transform: translateY(-2px); }
+        .auth-btn-primary:disabled { opacity: 0.65; cursor: not-allowed; box-shadow: none; }
+
+        /* Footer */
+        .auth-footer {
+          text-align: center; margin-top: 20px;
+          font-size: 14px; color: var(--ink-2); font-weight: 500;
+        }
+        .auth-footer a {
+          color: var(--blue); font-weight: 800; text-decoration: none;
+        }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        @keyframes authFadeIn {
+          from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .cadastro-card { animation: fadeIn 0.45s ease both; }
-        .cadastro-card-padding { padding: 2rem !important; }
-        @media (min-width: 576px) {
-          .cadastro-card-padding { padding: 3rem !important; }
-        }
-        .cadastro-title { font-size: 36px; }
-        @media (min-width: 576px) {
-          .cadastro-title { font-size: 50px; }
-        }
+        .auth-form-wrap { animation: authFadeIn .4s cubic-bezier(.34,1.4,.64,1) both; }
       `}</style>
 
-      {/* Blob side */}
-      <div className="blob-wrapper">
-        <div className="blob-shape blob-inner d-flex align-items-center justify-content-center" />
-        <img
-          src={cachorro}
-          alt="cachorro"
-          style={{ position: 'absolute', width: '58%', height: 'auto', zIndex: 1 }}
-        />
-      </div>
-
-      {/* Cadastro card side */}
-      <div className="cadastro-wrapper">
-        <div className="cadastro-card cadastro-card-padding">
-          <h1 className="fw-bold mb-1 cadastro-title" style={{ color: '#3D2314', letterSpacing: '-0.5px' }}>
-            PawAdoption
-          </h1>
-          <p className="fw-bold mb-4" style={{ fontSize: 21, color: '#7B4A2D' }}>
-            Crie sua conta!
-          </p>
-
-          {/* Seletor de tipo */}
-          <div className="d-flex mb-4">
-            <button
-              type="button"
-              className={`tipo-btn ${tipo === 'ADOTANTE' ? 'active' : ''}`}
-              onClick={() => setTipo('ADOTANTE')}
-            >
-              Adotante
-            </button>
-            <button
-              type="button"
-              className={`tipo-btn ${tipo === 'ABRIGO' ? 'active' : ''}`}
-              onClick={() => setTipo('ABRIGO')}
-            >
-              Abrigo
-            </button>
+      <div className="auth-page">
+        {/* ── Painel esquerdo decorativo ── */}
+        <div className="auth-left">
+          <div className="auth-left-deco1" />
+          <div className="auth-left-deco2" />
+          <div className="auth-left-blob">
+            {tipo === 'ADOTANTE' ? '🐾' : '🏠'}
           </div>
+          <div className="auth-left-text">
+            <h2>
+              {tipo === 'ADOTANTE'
+                ? 'Encontre seu pet ideal'
+                : 'Cadastre seu abrigo'}
+            </h2>
+            <p>
+              {tipo === 'ADOTANTE'
+                ? 'Junte-se a milhares de famílias que encontraram seu companheiro perfeito.'
+                : 'Conecte seus animais a famílias amorosas em todo o Brasil.'}
+            </p>
+          </div>
+          <div className="auth-tipo-cards">
+            <div className="auth-tipo-card">
+              <div className="icon">🐕</div>
+              <div className="label">Adotante</div>
+            </div>
+            <div className="auth-tipo-card">
+              <div className="icon">🏠</div>
+              <div className="label">Abrigo</div>
+            </div>
+          </div>
+        </div>
 
-          <form onSubmit={handleSubmit}>
-            {/* Campos comuns */}
-            <div className="mb-3">
-              <label className="form-label">Nome</label>
-              <input className="form-control" type="text" value={nome}
-                onChange={e => setNome(e.target.value)} required autoComplete="name" />
+        {/* ── Formulário ── */}
+        <div className="auth-right">
+          <div className="auth-form-wrap">
+            {/* Logo */}
+            <Link to="/" className="auth-logo">
+              <div className="auth-logo-icon">🐾</div>
+              <span className="auth-logo-text">
+                Paw<span>Adoption</span>
+              </span>
+            </Link>
+
+            <h1 className="auth-heading">Criar sua conta</h1>
+            <p className="auth-subheading">Preencha os dados abaixo para começar.</p>
+
+            {/* Seletor de tipo */}
+            <div className="tipo-toggle">
+              <button
+                type="button"
+                className={`tipo-btn ${tipo === 'ADOTANTE' ? 'active' : ''}`}
+                onClick={() => setTipo('ADOTANTE')}
+              >
+                🐾 Adotante
+              </button>
+              <button
+                type="button"
+                className={`tipo-btn ${tipo === 'ABRIGO' ? 'active' : ''}`}
+                onClick={() => setTipo('ABRIGO')}
+              >
+                🏠 Abrigo
+              </button>
             </div>
 
-            <div className="mb-3">
-              <label className="form-label">Email</label>
-              <input className="form-control" type="email" value={email}
-                onChange={e => setEmail(e.target.value)} required autoComplete="email" />
-            </div>
+            <form onSubmit={handleSubmit} noValidate>
+              {/* Dados comuns */}
+              <div className="auth-section-label">Dados da conta</div>
 
-            <div className="mb-3">
-              <label className="form-label">Senha</label>
-              <input className="form-control" type="password" value={senha}
-                onChange={e => setSenha(e.target.value)} required autoComplete="new-password" />
-            </div>
-
-            {/* Campos Adotante */}
-            {tipo === 'ADOTANTE' && (
-              <>
-                <div className="mb-3">
-                  <label className="form-label">CPF</label>
-                  <input className="form-control" type="text" value={cpf}
-                    onChange={e => setCpf(e.target.value)} required placeholder="000.000.000-00" />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Data de nascimento</label>
-                  <input className="form-control" type="date" value={dataNascimento}
-                    onChange={e => setDataNascimento(e.target.value)} required />
-                </div>
-
-                <div className="form-check mb-4">
-                  <input className="form-check-input" type="checkbox" id="larTemporario"
-                    checked={larTemporario} onChange={e => setLarTemporario(e.target.checked)} />
-                  <label className="form-check-label" htmlFor="larTemporario">
-                    Quero oferecer lar temporário
-                  </label>
-                </div>
-              </>
-            )}
-
-            {/* Campos Abrigo */}
-            {tipo === 'ABRIGO' && (
-              <>
-                <div className="mb-3">
-                  <label className="form-label">CNPJ</label>
-                  <input className="form-control" type="text" value={cnpj}
-                    onChange={e => setCnpj(e.target.value)} required placeholder="00.000.000/0000-00" />
-                </div>
-
-                <div className="mb-4">
-                  <label className="form-label">Razão social</label>
-                  <input className="form-control" type="text" value={razaoSocial}
-                    onChange={e => setRazaoSocial(e.target.value)} required />
-                </div>
-              </>
-            )}
-
-            {erro && (
-              <div className="alert alert-danger py-2 text-center mb-3" style={{ fontSize: 14 }}>
-                {erro}
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="nome">
+                  {tipo === 'ADOTANTE' ? 'Seu nome completo' : 'Nome do abrigo'}
+                </label>
+                <input
+                  id="nome"
+                  className="auth-input"
+                  type="text"
+                  value={nome}
+                  onChange={e => setNome(e.target.value)}
+                  placeholder={tipo === 'ADOTANTE' ? 'Ana Silva' : 'Lar dos Focinhos'}
+                  required
+                  autoComplete="name"
+                />
               </div>
-            )}
 
-            <button className="btn btn-primary w-100 fw-bold py-3" type="submit" disabled={loading}>
-              {loading ? 'Cadastrando...' : 'Cadastrar'}
-            </button>
-          </form>
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  className="auth-input"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  required
+                  autoComplete="email"
+                />
+              </div>
 
-          <p className="text-center mt-4 mb-0" style={{ fontSize: 16, color: '#7B4A2D' }}>
-            Já tem uma conta?{' '}
-            <Link to="/login" className="link-login">Entre!</Link>
-          </p>
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="senha">Senha</label>
+                <div className="auth-input-wrap">
+                  <input
+                    id="senha"
+                    className="auth-input has-toggle"
+                    type={showSenha ? 'text' : 'password'}
+                    value={senha}
+                    onChange={e => setSenha(e.target.value)}
+                    placeholder="Mínimo 6 caracteres"
+                    required
+                    autoComplete="new-password"
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    className="auth-toggle-btn"
+                    onClick={() => setShowSenha(v => !v)}
+                    aria-label={showSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                  >
+                    {showSenha ? '🙈' : '👁️'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Campos exclusivos — Adotante */}
+              {tipo === 'ADOTANTE' && (
+                <>
+                  <div className="auth-section-label">Dados pessoais</div>
+
+                  <div className="auth-field">
+                    <label className="auth-label" htmlFor="cpf">CPF</label>
+                    <input
+                      id="cpf"
+                      className="auth-input"
+                      type="text"
+                      value={cpf}
+                      onChange={e => setCpf(e.target.value)}
+                      placeholder="000.000.000-00"
+                      required
+                    />
+                  </div>
+
+                  <div className="auth-field">
+                    <label className="auth-label" htmlFor="nascimento">Data de nascimento</label>
+                    <input
+                      id="nascimento"
+                      className="auth-input"
+                      type="date"
+                      value={dataNascimento}
+                      onChange={e => setDataNascimento(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <label className="auth-check">
+                    <input
+                      type="checkbox"
+                      checked={larTemporario}
+                      onChange={e => setLarTemporario(e.target.checked)}
+                    />
+                    <span className="auth-check-text">
+                      Quero oferecer <strong>lar temporário</strong> para animais que precisam de um aconchego
+                    </span>
+                  </label>
+                </>
+              )}
+
+              {/* Campos exclusivos — Abrigo */}
+              {tipo === 'ABRIGO' && (
+                <>
+                  <div className="auth-section-label">Dados do abrigo</div>
+
+                  <div className="auth-field">
+                    <label className="auth-label" htmlFor="cnpj">CNPJ</label>
+                    <input
+                      id="cnpj"
+                      className="auth-input"
+                      type="text"
+                      value={cnpj}
+                      onChange={e => setCnpj(e.target.value)}
+                      placeholder="00.000.000/0000-00"
+                      required
+                    />
+                  </div>
+
+                  <div className="auth-field">
+                    <label className="auth-label" htmlFor="razao">Razão social</label>
+                    <input
+                      id="razao"
+                      className="auth-input"
+                      type="text"
+                      value={razaoSocial}
+                      onChange={e => setRazaoSocial(e.target.value)}
+                      placeholder="Lar dos Focinhos LTDA"
+                      required
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Erro */}
+              {erro && (
+                <div className="auth-error">⚠️ {erro}</div>
+              )}
+
+              <button
+                type="submit"
+                className="auth-btn-primary"
+                disabled={loading}
+              >
+                {loading
+                  ? '⏳ Cadastrando...'
+                  : tipo === 'ADOTANTE'
+                    ? 'Criar conta de adotante →'
+                    : 'Cadastrar meu abrigo →'}
+              </button>
+            </form>
+
+            <p className="auth-footer">
+              Já tem uma conta?{' '}
+              <Link to="/login">Entrar</Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
