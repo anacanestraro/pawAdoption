@@ -3,6 +3,8 @@ import { PrivateRoutes, AdminRoutes } from './PrivateRoutes'
 import { PublicRoutes } from './PublicRoutes'
 import { Layout } from '../components/Layout'
 import { AdminLayout } from '../components/AdminLayout'
+import { AnimalFeed } from '../pages/AnimalFeed'
+import { AbrigoFeed } from '../pages/AbrigoFeed'
 
 export const AppRoutes = () => {
   return (
@@ -13,7 +15,8 @@ export const AppRoutes = () => {
       {/* Rotas privadas — ADOTANTE e ABRIGO */}
       <Route element={<PrivateRoutes />}>
         <Route element={<Layout />}>
-          <Route path="/home" element={<h1>Home</h1>} />
+          <Route path="/home" element={<AnimalFeed/>} />
+          <Route path="/abrigos" element={<AbrigoFeed/>} />         
           <Route path="/home/animais" element={<h1>Meus Animais</h1>} />
           <Route path="/home/voluntarios" element={<h1>Voluntários</h1>} />
           <Route path="/home/solicitacoes" element={<h1>Solicitações</h1>} />
