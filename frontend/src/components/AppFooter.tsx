@@ -10,6 +10,7 @@
  */
 
 import { Link } from 'react-router-dom'
+import '../styles/AppFooter.css'
 
 interface AppFooterProps {
   variant?: 'full' | 'compact'

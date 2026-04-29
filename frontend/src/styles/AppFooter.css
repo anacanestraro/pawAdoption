@@ -1,0 +1,262 @@
+/* ═══════════════════════════════════════════════════════
+   AppFooter.css — PawAdoption
+   Estilos do rodapé reutilizável (full + compact).
+═══════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════
+   VARIANTE FULL
+══════════════════════════════════════ */
+
+.appfooter {
+  background-color: #1A1008;
+  color: #FBF7EE;
+  padding: 0;
+  margin-top: auto;
+}
+
+/* ── Top section ── */
+.appfooter-top {
+  padding: 56px 80px 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 991.98px) {
+  .appfooter-top { padding: 40px 24px 32px; }
+}
+@media (max-width: 575.98px) {
+  .appfooter-top { padding: 32px 16px 24px; }
+}
+
+/* ── Logo ── */
+.appfooter-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.appfooter-logo-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.appfooter-logo-text {
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--cream);
+  letter-spacing: -0.02em;
+}
+
+.appfooter-logo-text span {
+  color: var(--laranja);
+}
+
+/* ── About text ── */
+.appfooter-about {
+  font-size: 0.9rem;
+  color: rgba(251, 247, 238, 0.65);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 280px;
+}
+
+/* ── Column titles ── */
+.appfooter-col-title {
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--laranja);
+  margin-bottom: 16px;
+}
+
+/* ── Links list ── */
+.appfooter-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appfooter-links a {
+  font-size: 0.9rem;
+  color: rgba(251, 247, 238, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.appfooter-links a:hover {
+  color: var(--cream);
+}
+
+/* ── Newsletter ── */
+.appfooter-newsletter-desc {
+  font-size: 0.88rem;
+  color: rgba(251, 247, 238, 0.65);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.appfooter-newsletter-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.appfooter-newsletter-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--cream);
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.appfooter-newsletter-input::placeholder {
+  color: rgba(251, 247, 238, 0.4);
+}
+
+.appfooter-newsletter-input:focus {
+  border-color: var(--laranja);
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.appfooter-newsletter-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: var(--laranja-d);
+  color: #fff;
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.appfooter-newsletter-btn:hover {
+  background: var(--laranja);
+  transform: translateY(-1px);
+}
+
+.appfooter-newsletter-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Bottom bar ── */
+.appfooter-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 80px;
+  font-size: 0.82rem;
+  color: rgba(251, 247, 238, 0.45);
+}
+
+@media (max-width: 991.98px) {
+  .appfooter-bottom { padding: 16px 24px; }
+}
+@media (max-width: 575.98px) {
+  .appfooter-bottom {
+    padding: 16px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.appfooter-bottom-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.appfooter-bottom-links a {
+  color: rgba(251, 247, 238, 0.45);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.appfooter-bottom-links a:hover {
+  color: var(--cream);
+}
+
+/* ══════════════════════════════════════
+   VARIANTE COMPACT
+══════════════════════════════════════ */
+
+.appfooter-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px 80px;
+  background-color: #1A1008;
+  color: rgba(251, 247, 238, 0.55);
+  font-size: 0.83rem;
+  margin-top: auto;
+}
+
+@media (max-width: 991.98px) {
+  .appfooter-compact { padding: 16px 24px; }
+}
+@media (max-width: 575.98px) {
+  .appfooter-compact {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 16px;
+  }
+}
+
+.appfooter-compact-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.appfooter-compact-logo-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.appfooter-compact-logo-text {
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--cream);
+}
+
+.appfooter-compact-logo-text span {
+  color: var(--laranja);
+}
+
+.appfooter-compact-links {
+  display: flex;
+  gap: 18px;
+}
+
+.appfooter-compact-links a {
+  color: rgba(251, 247, 238, 0.45);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.appfooter-compact-links a:hover {
+  color: var(--cream);
+}
