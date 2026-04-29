@@ -29,6 +29,16 @@
   --line:      #EDE5D8;
   --line-2:    #D5C8B8;
 
+  /* Footer — light mode: fundo claro */
+  --footer-bg:           #F5ECD7;
+  --footer-text:         #2D1B14;
+  --footer-text-muted:   rgba(45, 27, 20, 0.65);
+  --footer-text-dim:     rgba(45, 27, 20, 0.45);
+  --footer-link:         rgba(45, 27, 20, 0.7);
+  --footer-border:       rgba(45, 27, 20, 0.12);
+  --footer-input-bg:     rgba(255, 255, 255, 0.6);
+  --footer-input-border: rgba(45, 27, 20, 0.2);
+
   /* Design system v2 (Landing) */
   --blue:          #175EA8;
   --blue-700:      #114a85;
@@ -69,6 +79,16 @@
   --line:      #2A3552;
   --line-2:    #3A4868;
 
+  /* Footer — dark mode: fundo escuro com patinhas */
+  --footer-bg:           #0D1526;
+  --footer-text:         #F0E8DC;
+  --footer-text-muted:   rgba(240, 232, 220, 0.65);
+  --footer-text-dim:     rgba(240, 232, 220, 0.45);
+  --footer-link:         rgba(240, 232, 220, 0.7);
+  --footer-border:       rgba(255, 255, 255, 0.1);
+  --footer-input-bg:     rgba(255, 255, 255, 0.07);
+  --footer-input-border: rgba(255, 255, 255, 0.15);
+
   /* Design system v2 (Landing) */
   --blue:          #4D8FD9;
   --blue-700:      #3877BC;
@@ -100,14 +120,18 @@ body {
   font-family: 'Nunito', system-ui, sans-serif;
   font-weight: 500;
   line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Especificidade maior que o Bootstrap para garantir que o tema funcione */
+html body {
   color: var(--marrom);
   background-color: var(--cream);
   background-repeat: repeat;
   background-size: 120px 120px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.25s ease, color 0.25s ease;
-  overflow-x: hidden;
 }
 
 #root {

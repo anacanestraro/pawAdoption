@@ -6,7 +6,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import './styles/bootstrap-custom.scss'
 import './index.css'   // reset limpo (sem background do Vite)
 import './App.css'     // remove padding do #root
-import './global.css'  // variáveis de tema + base styles
+import './global.css'  // variáveis de tema + base styles (vem por último, sobrescreve Bootstrap)
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(
