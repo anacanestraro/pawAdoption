@@ -195,35 +195,6 @@ const AnimalCard = ({
     </article>
   )
 }
-
-// ─── Modal de confirmação ─────────────────────────────────────────────────────
-
-const Modal = ({ animal, onConfirm, onCancel, loading }: {
-  animal: Animal
-  onConfirm: () => void
-  onCancel: () => void
-  loading: boolean
-}) => (
-  <div className="modal-overlay" onClick={onCancel}>
-    <div className="modal-box" onClick={e => e.stopPropagation()}>
-      <div style={{ fontSize: 48, textAlign: 'center', marginBottom: 12 }}>🐾</div>
-      <h3 style={{ margin: '0 0 8px', textAlign: 'center', fontSize: 22, fontWeight: 800, color: '#2D1B14' }}>
-        Adotar {animal.nome}?
-      </h3>
-      <p style={{ margin: '0 0 24px', textAlign: 'center', fontSize: 14, color: '#6B4226', lineHeight: 1.55 }}>
-        Você está prestes a enviar uma solicitação de adoção para <strong>{animal.nome}</strong>.
-        O abrigo responsável entrará em contato em breve.
-      </p>
-      <div style={{ display: 'flex', gap: 10 }}>
-        <button className="modal-cancel" onClick={onCancel}>Cancelar</button>
-        <button className="modal-confirm" onClick={onConfirm} disabled={loading}>
-          {loading ? 'Enviando...' : 'Confirmar ❤️'}
-        </button>
-      </div>
-    </div>
-  </div>
-)
-
 // ─── Toast ────────────────────────────────────────────────────────────────────
 
 const Toast = ({ msg, type }: { msg: string; type: 'success' | 'error' }) => (
@@ -248,7 +219,6 @@ export const AnimalFeed = () => {
   const [ordemAtiva, setOrdemAtiva] = useState<'recentes'|'nome'|'idade'>('recentes')
 
   // Modal adoção
-  const [modalAnimal, setModalAnimal] = useState<Animal | null>(null)
   const [adotando, setAdotando]       = useState(false)
   const [adotandoId, setAdotandoId]   = useState<number | null>(null)
 
@@ -293,27 +263,10 @@ export const AnimalFeed = () => {
   }, [animais, filtroAtivo, busca, ordemAtiva])
 
   // Adotar
-  const handleAdotar = (id: number) => {
-    if (!usuario) { navigate('/login'); return }
-    const animal = animais.find(a => a.id === id)
-    if (animal) setModalAnimal(animal)
-  }
-
-  const confirmarAdocao = async () => {
-    if (!modalAnimal) return
-    setAdotando(true)
-    setAdotandoId(modalAnimal.id)
-    try {
-      await api.post(`/solicitacoes/solicitarAdocao/${modalAnimal.id}`)
-      showToast(`Solicitação enviada! O abrigo entrará em contato em breve. 🐾`, 'success')
-      setModalAnimal(null)
-    } catch {
-      showToast('Erro ao enviar solicitação. Tente novamente.', 'error')
-    } finally {
-      setAdotando(false)
-      setAdotandoId(null)
-    }
-  }
+const handleAdotar = (id: number) => {
+  if (!usuario) { navigate('/login'); return }
+  navigate(`/adotar/${id}`)
+}
 
   // Denunciar
   const handleDenunciar = async (id: number) => {
@@ -486,16 +439,6 @@ export const AnimalFeed = () => {
         </div>
 
       </div>
-
-      {/* Modal de confirmação */}
-      {modalAnimal && (
-        <Modal
-          animal={modalAnimal}
-          onConfirm={confirmarAdocao}
-          onCancel={() => setModalAnimal(null)}
-          loading={adotando}
-        />
-      )}
 
       {/* Toast */}
       {toast && <Toast msg={toast.msg} type={toast.type} />}
