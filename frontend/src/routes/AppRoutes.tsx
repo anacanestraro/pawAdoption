@@ -6,6 +6,7 @@ import { AdminLayout } from '../components/AdminLayout'
 import { AnimalFeed } from '../pages/AnimalFeed'
 import { AbrigoFeed } from '../pages/AbrigoFeed'
 import { CadastrarAnimal } from '../pages/CadastrarAnimal'
+import { AdminValidacoes } from '../pages/AdminValidacoes'
 
 export const AppRoutes = () => {
   return (
@@ -16,8 +17,8 @@ export const AppRoutes = () => {
       {/* Rotas privadas — ADOTANTE e ABRIGO */}
       <Route element={<PrivateRoutes />}>
         <Route element={<Layout />}>
-          <Route path="/home" element={<AnimalFeed/>} />
-          <Route path="/abrigos" element={<AbrigoFeed/>} />
+          <Route path="/home" element={<AnimalFeed />} />
+          <Route path="/abrigos" element={<AbrigoFeed />} />
           <Route path="/animais/cadastrar" element={<CadastrarAnimal />} />
           <Route path="/home/animais" element={<h1>Meus Animais</h1>} />
           <Route path="/home/voluntarios" element={<h1>Voluntários</h1>} />
@@ -31,7 +32,7 @@ export const AppRoutes = () => {
       <Route element={<AdminRoutes />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<Navigate to="/admin/validacoes" replace />} />
-          <Route path="/admin/validacoes" element={<h1>Validações</h1>} />
+          <Route path="/admin/validacoes" element={<AdminValidacoes />} />
           <Route path="/admin/denuncias" element={<h1>Denúncias</h1>} />
           <Route path="/admin/usuarios" element={<h1>Usuários</h1>} />
         </Route>
