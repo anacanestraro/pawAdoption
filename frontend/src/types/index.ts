@@ -63,3 +63,12 @@ export interface Animal {
     deleted_at?: Date;
 }
 
+export interface SolicitacaoAdocao {
+    id: number;
+    animal_id: number;
+    adotante_id: number;
+    status: 'PENDENTE' | 'APROVADA' | 'REJEITADA' | 'CANCELADA';
+    data_solicitacao: Date;
+    data_resposta?: Date;
+    animal?: Animal;
+}
