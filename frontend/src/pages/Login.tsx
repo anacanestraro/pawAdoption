@@ -2,9 +2,15 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import '../styles/Auth.css'
 import { useNavigate, Link } from 'react-router-dom'
+import type { Usuario } from '../types'
+
+const redirectByRole = (usuario: Usuario): string => {
+  if (usuario.tipo_usuario === 'ADMINISTRADOR') return '/admin'
+  return '/home'
+}
 
 export const Login = () => {
-  const { login } = useAuth()
+  const { login, usuario } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -18,7 +24,12 @@ export const Login = () => {
     setLoading(true)
     try {
       await login(email, senha)
-      navigate('/')
+      // login() seta o usuário no contexto; lemos direto do AuthContext
+      // mas como o state ainda não atualizou nesse tick, usamos o retorno implícito
+      // do localStorage que o AuthContext já persistiu
+      const salvo = localStorage.getItem('usuario')
+      const u: Usuario | null = salvo ? JSON.parse(salvo) : null
+      navigate(u ? redirectByRole(u) : '/home', { replace: true })
     } catch {
       setErro('Email ou senha inválidos.')
     } finally {
