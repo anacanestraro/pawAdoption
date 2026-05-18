@@ -8,6 +8,7 @@
  *   POST /denuncias/denunciar/:id          → denunciar animal  (requer JWT)
  */
 
+import '../styles/Feed.css'
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'

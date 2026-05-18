@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import '../styles/Auth.css'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/api'
 
