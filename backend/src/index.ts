@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
+import path from 'path';
 import usuarioRotas from "./routes/UsuarioRoute";
 import adotanteRotas from "./routes/AdotanteRoute";
 import abrigoRotas from "./routes/AbrigoRoute";
@@ -25,11 +26,15 @@ app.use(cors({
   credentials: true,
 }));
 
+// ── Serve arquivos de upload estáticos ───────────────────────────────────────
+// url_foto salva no banco: /uploads/animais/arquivo.jpg
+// acesso via:              http://localhost:3001/uploads/animais/arquivo.jpg
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-// Exemplo de rota usando Prisma
 app.get('/users', async (req, res) => {
   const users = await prisma.user.findMany();
   res.json(users);
