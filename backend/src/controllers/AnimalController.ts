@@ -142,3 +142,29 @@ export const uploadFotoAnimal = async (req: Request, res: Response) => {
         return res.status(500).json({error: "Erro ao fazer upload da foto."});
     }
 }
+
+export const animalPorID = async (req: Request, res:Response) => {
+    const { id } = req.params;
+    
+    try {
+        const animal = await prisma.animal.findUnique({
+            where: { id: Number(id) },
+            include: {
+                fotos: true,
+                abrigo: {
+                    include: { usuario: true }
+                },
+                lar_temporario: {
+                    include: { usuario: true }
+                }
+            }
+        });
+        res.set('Cache-Control', 'no-store');
+        if (!animal) {
+            return res.status(404).json({error: "Animal não encontrado"});
+        }
+        return res.status(200).json(animal);
+    }catch(error){
+        return res.status(500).json({error: "Erro ao buscar animal"});
+    }
+} 
