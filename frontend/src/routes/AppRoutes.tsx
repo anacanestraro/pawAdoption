@@ -5,11 +5,11 @@ import { AdminLayout } from '../components/AdminLayout'
 import { AnimalFeed } from '../pages/AnimalFeed'
 import { AbrigoFeed } from '../pages/AbrigoFeed'
 import { CadastrarAnimal } from '../pages/CadastrarAnimal'
-import { AdocaoAnimal } from '../pages/AdocaoAnimal'
 import { AdminValidacoes } from '../pages/AdminValidacoes'
 import { Landing } from '../pages/Landing'
 import { Login } from '../pages/Login'
 import { Cadastro } from '../pages/Cadastro'
+import { AdocaoAnimal } from '../pages/AdocaoAnimal'
 
 export const AppRoutes = () => {
   return (
@@ -25,7 +25,7 @@ export const AppRoutes = () => {
           <Route path="/home"              element={<AnimalFeed />} />
           <Route path="/abrigos"           element={<AbrigoFeed />} />
           <Route path="/animais/cadastrar" element={<CadastrarAnimal />} />
-          <Route path="/adotar/:id"        element={<AdocaoAnimal />} />
+          <Route path="/adotar/:id" element={<AdocaoAnimal />} />
           <Route path="/home/animais"      element={<h1>Meus Animais</h1>} />
           <Route path="/home/voluntarios"  element={<h1>Voluntários</h1>} />
           <Route path="/home/solicitacoes" element={<h1>Solicitações</h1>} />
