@@ -8,8 +8,6 @@ interface NavLink { label: string; to: string }
 
 interface AppNavbarProps {
   links?: NavLink[]
-  lang?: string
-  setLang?: (l: string) => void
 }
 
 const LINKS_ADOTANTE: NavLink[] = [
@@ -146,7 +144,7 @@ const NAV_STYLE = `
   }
 `
 
-export const AppNavbar = ({ links, lang = 'pt', setLang }: AppNavbarProps) => {
+export const AppNavbar = ({ links }: AppNavbarProps) => {
   const { usuario, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
@@ -185,9 +183,8 @@ export const AppNavbar = ({ links, lang = 'pt', setLang }: AppNavbarProps) => {
       <style>{NAV_STYLE}</style>
       <nav className="appnav" style={{ background: navBg, borderBottom: navBorder }}>
         <div className="appnav-inner">
-          <Link to="/" className="appnav-logo">
-            <img src={theme === 'dark' ? logo_escura : logo_clara} className="appnav-logo-img" alt=""></img>
-
+          <Link to="/" className="appnav-logo" aria-label="Paw Adoption">
+            <img src={theme === 'dark' ? logo_escura : logo_clara} className="appnav-logo-img" alt="" />
           </Link>
 
           <ul className="appnav-links">
@@ -201,19 +198,6 @@ export const AppNavbar = ({ links, lang = 'pt', setLang }: AppNavbarProps) => {
           </ul>
 
           <div className="appnav-right">
-            {setLang && (
-              <div className="d-none d-md-flex" style={{ padding: 3, borderRadius: 999, background: 'var(--paper)', border: '2px solid var(--blue-100)' }}>
-                {['pt', 'en'].map(L => (
-                  <button key={L} onClick={() => setLang(L)} style={{
-                    padding: '4px 10px', borderRadius: 999, border: 'none',
-                    fontSize: 11, fontWeight: 800, cursor: 'pointer',
-                    background: lang === L ? 'var(--blue)' : 'transparent',
-                    color: lang === L ? 'white' : 'var(--ink-2)',
-                  }}>{L.toUpperCase()}</button>
-                ))}
-              </div>
-            )}
-
             <button onClick={toggleTheme} style={{
               width: 38, height: 38, borderRadius: 999,
               border: '2px solid var(--blue-100)', background: 'var(--paper)',

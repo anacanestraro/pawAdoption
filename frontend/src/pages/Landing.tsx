@@ -9,7 +9,7 @@
  *   POST /voluntarios/solicitar/:abrigo_id → voluntariado (requer JWT)
  */
 
-import { useState, useEffect, useCallback, useContext, createContext } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -20,81 +20,45 @@ import { AppFooter } from '../components/AppFooter'
 
 // ─── i18n ────────────────────────────────────────────────────────────────────
 
-const STRINGS: Record<string, Record<string, string>> = {
-  en: {
-    'hero.badge': 'Furry friends waiting for you 🐾', 'hero.woof': 'WOOF!',
-    'hero.title.1': 'Find your', 'hero.title.2': 'fluffy', 'hero.title.3': 'soulmate.',
-    'hero.sub': 'Thousands of pets are dreaming of belly rubs and forever homes. Browse, match, and bring home your new best friend — totally free.',
-    'hero.cta.adopt': 'Adopt a friend', 'hero.cta.how': 'See how it works',
-    'hero.stat.shelters': 'Partner shelters', 'hero.stat.tails': 'Happy tails',
-    'cat.all': 'All', 'cat.dogs': 'Dogs', 'cat.cats': 'Cats', 'cat.small': 'Small',
-    'featured.eyebrow': 'Featured friends', 'featured.title': "Meet this week's adoptable pals.",
-    'featured.seeAll': 'See all pets', 'pet.meet': 'Meet', 'pet.new': 'NEW!', 'pet.available': 'AVAILABLE',
-    'pet.small': 'Small', 'pet.medium': 'Medium', 'pet.large': 'Large',
-    'pet.male': 'M', 'pet.female': 'F', 'pet.years': 'yr',
-    'support.vol.eyebrow': 'I want to help', 'support.vol.title.1': 'Volunteer your time.',
-    'support.vol.title.2': 'Become a hero. 🦸',
-    'support.vol.desc': 'Walk dogs, foster kittens, help at adoption events. Just 4 hours a month makes a huge difference.',
-    'support.vol.b1': 'Flexible scheduling', 'support.vol.b2': 'Free training included', 'support.vol.b3': 'Open to ages 16+',
-    'support.vol.cta': 'Sign me up!', 'support.vol.login': 'Log in to volunteer',
-    'support.vol.success': 'Request sent! The shelter will contact you soon. 🐾',
-    'support.vol.pick': 'Choose a shelter to volunteer at:',
-    'support.donate.eyebrow': 'Make a difference',
-    'support.donate.title': 'Help feed shelter pets. Every bit counts! 🦴',
-    'support.donate.desc': '100% goes straight to partner shelters. No fees, no cuts — just kibble.',
-    'support.donate.btn': 'Donate now',
-    'shelters.eyebrow': 'Partner shelters', 'shelters.title': 'The heroes doing the real work. 🏠',
-    'shelters.viewAll': 'All shelters', 'shelters.since': 'Since',
-    'shelters.visit': 'Visit shelter', 'shelters.tag.verified': 'Verified',
-    'shelters.loading': 'Loading shelters...', 'shelters.empty': 'No shelters found.',
-    'shelters.capacity': 'Capacity',
-    'how.eyebrow': 'How it works', 'how.title': 'Four wags. Two weeks. One forever friend.',
-    'how.s1.t': 'Tell us about you', 'how.s1.d': 'Share your home, schedule, and dream pal. Takes 3 minutes!',
-    'how.s2.t': 'Meet your matches', 'how.s2.d': 'We curate a shortlist of pets that match your vibe.',
-    'how.s3.t': 'Visit a shelter', 'how.s3.d': 'Book a meet-and-greet near you. No pressure, all snuggles.',
-    'how.s4.t': 'Welcome them home!', 'how.s4.d': 'Sign the papers, pack the toys. The fun part begins. 🎉',
-    'how.step': 'STEP',
-    'loading': 'Loading...', 'error': 'Error loading data.',
-  },
-  pt: {
-    'hero.badge': 'Amigos peludos esperando por você 🐾', 'hero.woof': 'AU AU!',
-    'hero.title.1': 'Encontre sua', 'hero.title.2': 'fofa', 'hero.title.3': 'alma gêmea.',
-    'hero.sub': 'Milhares de pets estão sonhando com cafuné e um lar para sempre. Navegue, conecte e leve para casa seu novo melhor amigo — totalmente grátis.',
-    'hero.cta.adopt': 'Adotar um amigo', 'hero.cta.how': 'Veja como funciona',
-    'hero.stat.shelters': 'Abrigos parceiros', 'hero.stat.tails': 'Finais felizes',
-    'cat.all': 'Todos', 'cat.dogs': 'Cachorros', 'cat.cats': 'Gatos', 'cat.small': 'Pequenos',
-    'featured.eyebrow': 'Pets em destaque', 'featured.title': 'Conheça os adotáveis da semana.',
-    'featured.seeAll': 'Ver todos os pets', 'pet.meet': 'Conhecer', 'pet.new': 'NOVO!', 'pet.available': 'DISPONÍVEL',
-    'pet.small': 'Pequeno', 'pet.medium': 'Médio', 'pet.large': 'Grande',
-    'pet.male': 'M', 'pet.female': 'F', 'pet.years': 'ano',
-    'support.vol.eyebrow': 'Quero ajudar', 'support.vol.title.1': 'Doe seu tempo.',
-    'support.vol.title.2': 'Vire um herói. 🦸',
-    'support.vol.desc': 'Passeie com cães, cuide de filhotes, ajude em eventos. Só 4 horas por mês fazem uma grande diferença.',
-    'support.vol.b1': 'Horário flexível', 'support.vol.b2': 'Treinamento gratuito', 'support.vol.b3': 'Aberto para maiores de 16',
-    'support.vol.cta': 'Quero me voluntariar!', 'support.vol.login': 'Entre para se voluntariar',
-    'support.vol.success': 'Solicitação enviada! O abrigo entrará em contato em breve. 🐾',
-    'support.vol.pick': 'Escolha um abrigo para se voluntariar:',
-    'support.donate.eyebrow': 'Faça a diferença',
-    'support.donate.title': 'Ajude a alimentar os pets dos abrigos. 🦴',
-    'support.donate.desc': '100% vai direto para os abrigos parceiros. Sem taxas, só ração.',
-    'support.donate.btn': 'Fazer doação',
-    'shelters.eyebrow': 'Abrigos parceiros', 'shelters.title': 'Os heróis que fazem o trabalho de verdade. 🏠',
-    'shelters.viewAll': 'Todos os abrigos', 'shelters.since': 'Desde',
-    'shelters.visit': 'Visitar abrigo', 'shelters.tag.verified': 'Verificado',
-    'shelters.loading': 'Carregando abrigos...', 'shelters.empty': 'Nenhum abrigo encontrado.',
-    'shelters.capacity': 'Capacidade',
-    'how.eyebrow': 'Como funciona', 'how.title': 'Quatro passos. Duas semanas. Um amigo para sempre.',
-    'how.s1.t': 'Conte sobre você', 'how.s1.d': 'Compartilhe sua casa, rotina e o pet dos seus sonhos. Leva 3 minutos!',
-    'how.s2.t': 'Veja seus matches', 'how.s2.d': 'Curamos uma lista de pets que combinam com seu estilo.',
-    'how.s3.t': 'Visite um abrigo', 'how.s3.d': 'Marque uma visita perto de você. Sem pressão, só carinho.',
-    'how.s4.t': 'Bem-vindo ao lar!', 'how.s4.d': 'Assine os papéis, prepare os brinquedos. A diversão começa. 🎉',
-    'how.step': 'PASSO',
-    'loading': 'Carregando...', 'error': 'Erro ao carregar dados.',
-  },
+const STRINGS: Record<string, string> = {
+  'hero.badge': 'Amigos peludos esperando por você 🐾', 'hero.woof': 'AU AU!',
+  'hero.title.1': 'Encontre sua', 'hero.title.2': 'fofa', 'hero.title.3': 'alma gêmea.',
+  'hero.sub': 'Milhares de pets estão sonhando com cafuné e um lar para sempre. Navegue, conecte e leve para casa seu novo melhor amigo — totalmente grátis.',
+  'hero.cta.adopt': 'Adotar um amigo', 'hero.cta.how': 'Veja como funciona',
+  'hero.stat.shelters': 'Abrigos parceiros', 'hero.stat.tails': 'Finais felizes',
+  'cat.all': 'Todos', 'cat.dogs': 'Cachorros', 'cat.cats': 'Gatos', 'cat.small': 'Pequenos',
+  'featured.eyebrow': 'Pets em destaque', 'featured.title': 'Conheça os adotáveis da semana.',
+  'featured.seeAll': 'Ver todos os pets', 'pet.meet': 'Conhecer', 'pet.new': 'NOVO!', 'pet.available': 'DISPONÍVEL',
+  'pet.small': 'Pequeno', 'pet.medium': 'Médio', 'pet.large': 'Grande',
+  'pet.male': 'M', 'pet.female': 'F', 'pet.years': 'ano',
+  'support.vol.eyebrow': 'Quero ajudar', 'support.vol.title.1': 'Doe seu tempo.',
+  'support.vol.title.2': 'Vire um herói. 🦸',
+  'support.vol.desc': 'Passeie com cães, cuide de filhotes, ajude em eventos. Só 4 horas por mês fazem uma grande diferença.',
+  'support.vol.b1': 'Horário flexível', 'support.vol.b2': 'Treinamento gratuito', 'support.vol.b3': 'Aberto para maiores de 16',
+  'support.vol.cta': 'Quero me voluntariar!', 'support.vol.login': 'Entre para se voluntariar',
+  'support.vol.success': 'Solicitação enviada! O abrigo entrará em contato em breve. 🐾',
+  'support.vol.pick': 'Escolha um abrigo para se voluntariar:',
+  'support.donate.eyebrow': 'Faça a diferença',
+  'support.donate.title': 'Ajude a alimentar os pets dos abrigos. 🦴',
+  'support.donate.desc': '100% vai direto para os abrigos parceiros. Sem taxas, só ração.',
+  'support.donate.btn': 'Fazer doação',
+  'shelters.eyebrow': 'Abrigos parceiros', 'shelters.title': 'Os heróis que fazem o trabalho de verdade. 🏠',
+  'shelters.viewAll': 'Todos os abrigos', 'shelters.since': 'Desde',
+  'shelters.visit': 'Visitar abrigo', 'shelters.tag.verified': 'Verificado',
+  'shelters.loading': 'Carregando abrigos...', 'shelters.empty': 'Nenhum abrigo encontrado.',
+  'shelters.capacity': 'Capacidade',
+  'how.eyebrow': 'Como funciona', 'how.title': 'Quatro passos. Duas semanas. Um amigo para sempre.',
+  'how.s1.t': 'Conte sobre você', 'how.s1.d': 'Compartilhe sua casa, rotina e o pet dos seus sonhos. Leva 3 minutos!',
+  'how.s2.t': 'Veja seus matches', 'how.s2.d': 'Curamos uma lista de pets que combinam com seu estilo.',
+  'how.s3.t': 'Visite um abrigo', 'how.s3.d': 'Marque uma visita perto de você. Sem pressão, só carinho.',
+  'how.s4.t': 'Bem-vindo ao lar!', 'how.s4.d': 'Assine os papéis, prepare os brinquedos. A diversão começa. 🎉',
+  'how.step': 'PASSO',
+  'loading': 'Carregando...', 'error': 'Erro ao carregar dados.',
 }
 
-const I18nCtx = createContext({ lang: 'pt', t: (k: string) => k, setLang: (_: string) => {} })
-const useI18n = () => useContext(I18nCtx)
+const t = (k: string) => STRINGS[k] || k
+const useI18n = () => ({ t })
+
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -279,7 +243,7 @@ const AnimalCard = ({ animal, index }: { animal: Animal; index: number }) => {
   const emoji = especieEmoji(animal.especie)
   const isNew = new Date().getTime() - new Date(animal.created_at).getTime() < 7 * 24 * 60 * 60 * 1000
   const porteLabel = animal.porte === 'PEQUENO' ? t('pet.small') : animal.porte === 'GRANDE' ? t('pet.large') : t('pet.medium')
-  const sexoLabel  = animal.sexo === 'FEMEA' ? t('pet.female') : t('pet.male')
+  const sexoLabel = animal.sexo === 'FEMEA' ? t('pet.female') : t('pet.male')
 
   return (
     <article style={{
@@ -366,10 +330,10 @@ const FeaturedPets = () => {
   const [filtro, setFiltro] = useState('Todos')
 
   const FILTROS = [
-    { key: 'Todos',    label: t('cat.all'),   emoji: '🏠' },
-    { key: 'Cachorro', label: t('cat.dogs'),  emoji: '🐕' },
-    { key: 'Gato',     label: t('cat.cats'),  emoji: '🐱' },
-    { key: 'PEQUENO',  label: t('cat.small'), emoji: '🐇' },
+    { key: 'Todos', label: t('cat.all'), emoji: '🏠' },
+    { key: 'Cachorro', label: t('cat.dogs'), emoji: '🐕' },
+    { key: 'Gato', label: t('cat.cats'), emoji: '🐱' },
+    { key: 'PEQUENO', label: t('cat.small'), emoji: '🐇' },
   ]
 
   useEffect(() => {
@@ -685,14 +649,11 @@ const CtaCadastro = () => {
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 export const Landing = () => {
-  const [lang, setLang] = useState(() => localStorage.getItem('paw_lang') || 'pt')
   const { theme } = useTheme()   // ← tema vem do contexto global
   const [abrigos, setAbrigos] = useState<Abrigo[]>([])
   const [abrigosLoading, setAbrigosLoading] = useState(true)
   const [abrigosError, setAbrigosError] = useState(false)
   const [totalAnimais, setTotalAnimais] = useState(0)
-
-  const t = useCallback((k: string) => STRINGS[lang]?.[k] || STRINGS.en[k] || k, [lang])
 
   useEffect(() => {
     api.get<Abrigo[]>('/abrigos')
@@ -704,31 +665,24 @@ export const Landing = () => {
   useEffect(() => {
     api.get<Animal[]>('/animais')
       .then(res => setTotalAnimais(res.data.filter((a: Animal) => a.status === 'DISPONIVEL').length))
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
-  useEffect(() => {
-    localStorage.setItem('paw_lang', lang)
-    document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en'
-  }, [lang])
-
   return (
-    <I18nCtx.Provider value={{ lang, t, setLang }}>
-      <>
-        <AppNavbar lang={lang} setLang={setLang} />
+    <>
+      <AppNavbar />
 
-        <main>
-          <Hero totalAnimais={totalAnimais} totalAbrigos={abrigos.length} />
-          <FeaturedPets />
-          <SupportRow abrigos={abrigos} />
-          <PartnerShelters abrigos={abrigos} loading={abrigosLoading} error={abrigosError} />
-          <HowItWorks />
-          <CtaCadastro />
-        </main>
+      <main>
+        <Hero totalAnimais={totalAnimais} totalAbrigos={abrigos.length} />
+        <FeaturedPets />
+        <SupportRow abrigos={abrigos} />
+        <PartnerShelters abrigos={abrigos} loading={abrigosLoading} error={abrigosError} />
+        <HowItWorks />
+        <CtaCadastro />
+      </main>
 
-        <AppFooter />
-      </>
-    </I18nCtx.Provider>
+      <AppFooter />
+    </>
   )
 }
 
