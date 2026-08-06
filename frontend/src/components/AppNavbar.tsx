@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import logo_clara from '../assets/lockup_claro.png'
 import logo_escura from '../assets/lockup_original.png'
+import icon_lua from '../assets/icon_lua.png'
+import icon_sol from '../assets/icon_sol_dark.png'
 interface NavLink { label: string; to: string }
 
 interface AppNavbarProps {
@@ -55,6 +57,16 @@ const NAV_STYLE = `
     color: var(--ink); letter-spacing: -0.02em;
   }
   .appnav-logo-text span { color: var(--orange); }
+
+  /* Botão de tema */
+  .appnav-theme-btn {
+    width: 38px; height: 38px; border-radius: 999px;
+    border: 2px solid var(--blue-100); background: var(--paper);
+    cursor: pointer; display: grid; place-items: center;
+    padding: 0; transition: transform .15s;
+  }
+  .appnav-theme-btn:hover { transform: scale(1.07); }
+  .appnav-theme-btn img { width: 20px; height: 20px; display: block; }
 
   /* Nav links */
   .appnav-links { display: flex; align-items: center; gap: 2px; list-style: none; margin: 0; padding: 0; }
@@ -198,11 +210,13 @@ export const AppNavbar = ({ links }: AppNavbarProps) => {
           </ul>
 
           <div className="appnav-right">
-            <button onClick={toggleTheme} style={{
-              width: 38, height: 38, borderRadius: 999,
-              border: '2px solid var(--blue-100)', background: 'var(--paper)',
-              fontSize: 16, cursor: 'pointer', display: 'grid', placeItems: 'center',
-            }}>{theme === 'dark' ? '☀️' : '🌙'}</button>
+            <button
+              onClick={toggleTheme}
+              className="appnav-theme-btn"
+              aria-label={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+            >
+              <img src={theme === 'dark' ? icon_sol : icon_lua} alt="" />
+            </button>
 
             {usuario ? (
               <div className="appnav-avatar-wrap" ref={menuRef}>
