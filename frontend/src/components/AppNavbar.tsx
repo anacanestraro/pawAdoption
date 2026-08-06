@@ -46,7 +46,7 @@ const NAV_STYLE = `
   /* Logo */
   .appnav-logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
   .appnav-logo-img {
-    height: 34px;
+    height: 44px;
     width: auto;
     display: block;
   }
