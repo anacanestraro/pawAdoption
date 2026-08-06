@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
-
+import logo_clara from '../assets/lockup_claro.png'
+import logo_escura from '../assets/lockup_original.png'
 interface NavLink { label: string; to: string }
 
 interface AppNavbarProps {
@@ -12,18 +13,18 @@ interface AppNavbarProps {
 }
 
 const LINKS_ADOTANTE: NavLink[] = [
-  { label: 'Animais',      to: '/home' },
-  { label: 'Contate-nos',  to: '/contato' },
-  { label: 'Sobre',        to: '/sobre' },
+  { label: 'Animais', to: '/home' },
+  { label: 'Contate-nos', to: '/contato' },
+  { label: 'Sobre', to: '/sobre' },
 ]
 const LINKS_ABRIGO: NavLink[] = [
-  { label: 'Meus animais',  to: '/home/animais' },
-  { label: 'Voluntários',   to: '/home/voluntarios' },
-  { label: 'Solicitações',  to: '/home/solicitacoes' },
+  { label: 'Meus animais', to: '/home/animais' },
+  { label: 'Voluntários', to: '/home/voluntarios' },
+  { label: 'Solicitações', to: '/home/solicitacoes' },
 ]
 const LINKS_PUBLICO: NavLink[] = [
-  { label: 'Animais',       to: '#pets' },
-  { label: 'Abrigos',       to: '#abrigos' },
+  { label: 'Animais', to: '#pets' },
+  { label: 'Abrigos', to: '#abrigos' },
   { label: 'Como funciona', to: '#how-it-works' },
 ]
 
@@ -45,11 +46,11 @@ const NAV_STYLE = `
   }
 
   /* Logo */
-  .appnav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
-  .appnav-logo-icon {
-    width: 38px; height: 38px; border-radius: 11px;
-    background: var(--blue); display: grid; place-items: center;
-    font-size: 19px; box-shadow: 0 4px 0 var(--blue-700); transform: rotate(-6deg);
+  .appnav-logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+  .appnav-logo-img {
+    height: 34px;
+    width: auto;
+    display: block;
   }
   .appnav-logo-text {
     font-family: 'Baloo 2', sans-serif; font-size: 21px; font-weight: 800;
@@ -139,7 +140,10 @@ const NAV_STYLE = `
     .appnav-links { display: none; }
     .appnav-mobile-toggle { display: block; }
   }
-  @media (max-width: 575px) { .appnav-inner { padding: 0 16px; } }
+  @media (max-width: 575px) { 
+    .appnav-inner { padding: 0 16px; }
+    .appnav-logo-img { height: 26px; }
+  }
 `
 
 export const AppNavbar = ({ links, lang = 'pt', setLang }: AppNavbarProps) => {
@@ -160,8 +164,8 @@ export const AppNavbar = ({ links, lang = 'pt', setLang }: AppNavbarProps) => {
 
   const defaultLinks =
     !usuario ? LINKS_PUBLICO :
-    usuario.tipo_usuario === 'ABRIGO' ? LINKS_ABRIGO :
-    LINKS_ADOTANTE
+      usuario.tipo_usuario === 'ABRIGO' ? LINKS_ABRIGO :
+        LINKS_ADOTANTE
 
   const navLinks = links ?? defaultLinks
   const initials = usuario?.nome
@@ -182,8 +186,8 @@ export const AppNavbar = ({ links, lang = 'pt', setLang }: AppNavbarProps) => {
       <nav className="appnav" style={{ background: navBg, borderBottom: navBorder }}>
         <div className="appnav-inner">
           <Link to="/" className="appnav-logo">
-            <div className="appnav-logo-icon">🐾</div>
-            <span className="appnav-logo-text">Paw<span>Adoption</span></span>
+            <img src={theme === 'dark' ? logo_escura : logo_clara} className="appnav-logo-img" alt=""></img>
+
           </Link>
 
           <ul className="appnav-links">
