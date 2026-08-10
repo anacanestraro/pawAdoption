@@ -17,6 +17,9 @@ import api from '../api/api'
 import type { Animal, Abrigo } from '../types'
 import { AppNavbar } from '../components/AppNavbar'
 import { AppFooter } from '../components/AppFooter'
+import gato from '../assets/gato.png'
+import cachorro from '../assets/cachorro.png'
+import casa from '../assets/casa.png'
 
 // ─── i18n ────────────────────────────────────────────────────────────────────
 
@@ -330,9 +333,9 @@ const FeaturedPets = () => {
   const [filtro, setFiltro] = useState('Todos')
 
   const FILTROS = [
-    { key: 'Todos', label: t('cat.all'), emoji: '🏠' },
-    { key: 'Cachorro', label: t('cat.dogs'), emoji: '🐕' },
-    { key: 'Gato', label: t('cat.cats'), emoji: '🐱' },
+    { key: 'Todos', label: t('cat.all'), icon: casa },
+    { key: 'Cachorro', label: t('cat.dogs'), icon: cachorro },
+    { key: 'Gato', label: t('cat.cats'), icon: gato },
     { key: 'PEQUENO', label: t('cat.small'), emoji: '🐇' },
   ]
 
@@ -373,12 +376,16 @@ const FeaturedPets = () => {
           <button key={f.key} onClick={() => setFiltro(f.key)} style={{
             padding: '8px 18px', borderRadius: 999, cursor: 'pointer',
             fontSize: 14, fontWeight: 700, fontFamily: 'var(--display)',
+            display: 'inline-flex', alignItems: 'center', gap: 7,
             background: filtro === f.key ? 'var(--blue)' : 'var(--paper)',
             color: filtro === f.key ? 'white' : 'var(--ink-2)',
             border: `2px solid ${filtro === f.key ? 'var(--blue)' : 'var(--blue-100)'}`,
             boxShadow: filtro === f.key ? '0 3px 0 var(--blue-700)' : 'none',
           }}>
-            {f.emoji} {f.label}
+            {f.icon
+              ? <img src={f.icon} alt="" style={{ width: 20, height: 20, display: 'block' }} />
+              : <span>{f.emoji}</span>}
+            {f.label}
           </button>
         ))}
       </div>
