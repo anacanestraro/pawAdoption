@@ -336,7 +336,6 @@ const FeaturedPets = () => {
     { key: 'Todos', label: t('cat.all'), icon: casa },
     { key: 'Cachorro', label: t('cat.dogs'), icon: cachorro },
     { key: 'Gato', label: t('cat.cats'), icon: gato },
-    { key: 'PEQUENO', label: t('cat.small'), emoji: '🐇' },
   ]
 
   useEffect(() => {
@@ -349,7 +348,6 @@ const FeaturedPets = () => {
 
   const animaisFiltrados = animais.filter(a => {
     if (filtro === 'Todos') return true
-    if (filtro === 'PEQUENO') return a.porte === 'PEQUENO'
     return a.especie.toLowerCase().includes(filtro.toLowerCase())
   }).slice(0, 8)
 
