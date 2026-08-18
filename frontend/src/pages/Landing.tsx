@@ -130,12 +130,27 @@ const SectionHeader = ({ eyebrow, title, action }: { eyebrow?: string; title: st
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-const Hero = ({ totalAnimais, totalAbrigos }: { totalAnimais: number; totalAbrigos: number }) => {
+const Hero = ({ totalAnimais, totalAbrigos, animais }: {
+  totalAnimais: number; totalAbrigos: number; animais: Animal[]
+}) => {
   const { t } = useI18n()
+
+  // Pet em destaque = o mais recente. Segundo mais recente alimenta o card "adotado".
+  const ordenados = [...animais].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  )
+  const destaque = ordenados[0]
+
+  const destaqueFoto = destaque?.fotos && (destaque.fotos as any[]).length > 0
+    ? `${import.meta.env.VITE_API_URL}${(destaque.fotos as any[])[0].url_foto}`
+    : null
+  const destaqueEmoji = destaque ? especieEmoji(destaque.especie) : '🐕'
+
   return (
     <section className="container-fluid px-wide" style={{ paddingTop: 52, paddingBottom: 24 }}>
       <div className="row align-items-center g-5">
 
+        {/* ── Coluna esquerda (inalterada) ── */}
         <div className="col-12 col-lg-6 fade-in">
           <div className="d-inline-flex align-items-center gap-2 mb-4" style={{
             padding: '7px 16px 7px 7px', borderRadius: 999,
@@ -205,40 +220,92 @@ const Hero = ({ totalAnimais, totalAbrigos }: { totalAnimais: number; totalAbrig
           </div>
         </div>
 
+        {/* ── Coluna direita — pet real em destaque ── */}
         <div className="col-lg-6 d-none d-lg-block fade-in" style={{ position: 'relative', minHeight: 520 }}>
+          {/* Blob de fundo */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
             <svg viewBox="0 0 500 500" style={{ width: '100%', height: '100%' }}>
               <path fill="var(--blue)" opacity="0.1" d="M421 312c-19 65-79 116-149 134-71 18-130-9-181-58-50-49-77-117-46-178 32-61 96-100 175-104 79-3 152 25 191 83 39 58 29 58 10 123z" />
             </svg>
           </div>
+
+          {/* Card do pet em destaque — altura fixa, sem colapsar */}
           <div style={{
-            position: 'absolute', inset: '20px 30px 50px 30px', borderRadius: 32,
+            position: 'absolute', inset: '8px 12px 24px 12px', borderRadius: 32,
             border: '3px solid var(--paper)', boxShadow: 'var(--shadow-pop)',
             overflow: 'hidden', zIndex: 1,
           }}>
-            <Photo label="ADOTE UM PET" tone={1} ratio="auto" radius={28} emoji="🐕" />
+            {destaqueFoto ? (
+              <img
+                src={destaqueFoto}
+                alt={destaque.nome}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              <Photo
+                label={destaque ? destaque.nome.toUpperCase() : 'ADOTE UM PET'}
+                tone={1}
+                ratio="1/1"
+                radius={28}
+                emoji={destaqueEmoji}
+              />
+            )}
+
+            {/* Overlay com nome do pet em destaque */}
+            {destaque && (
+              <div style={{
+                position: 'absolute', left: 0, right: 0, bottom: 0,
+                padding: '40px 20px 18px',
+                background: 'linear-gradient(to top, rgba(26,34,56,0.85) 0%, transparent 100%)',
+                display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8,
+              }}>
+                <div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 2 }}>
+                    Disponível agora
+                  </div>
+                  <div style={{ fontSize: 22, color: 'white', fontFamily: 'var(--display)', fontWeight: 800, lineHeight: 1.1 }}>
+                    {destaqueEmoji} {destaque.nome}
+                  </div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>
+                    {destaque.raca || destaque.especie}
+                  </div>
+                </div>
+                <Link to={`/adotar/${destaque.id}`} style={{
+                  flexShrink: 0, padding: '10px 16px', borderRadius: 999,
+                  background: 'var(--orange)', color: 'white', textDecoration: 'none',
+                  fontSize: 13, fontWeight: 800, fontFamily: 'var(--display)',
+                  boxShadow: 'var(--shadow-orange)',
+                }}>
+                  Conhecer →
+                </Link>
+              </div>
+            )}
           </div>
+
+          {/* Card flutuante "adotado" — prova social, agora com pet real */}
           <div style={{
-            position: 'absolute', left: -16, bottom: 60, zIndex: 2,
+            position: 'absolute', left: -16, bottom: 20, zIndex: 2,
             background: 'var(--paper)', borderRadius: 20,
             border: '2px solid var(--blue-100)', boxShadow: 'var(--shadow-md)',
             padding: 14, width: 220, display: 'flex', gap: 10, alignItems: 'center',
             transform: 'rotate(-3deg)',
           }}>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--orange-100)', flexShrink: 0, display: 'grid', placeItems: 'center', fontSize: 26 }}>🐕</div>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--orange-100)', flexShrink: 0, display: 'grid', placeItems: 'center', fontSize: 26 }}>
+              {destaque ? especieEmoji(destaque.especie) : '🐕'}
+            </div>
             <div>
               <div style={{ fontSize: 10, color: '#4FB286', fontWeight: 700, letterSpacing: '.08em', marginBottom: 2 }}>● ADOTADO</div>
-              <div style={{ fontSize: 14, color: 'var(--ink)', fontFamily: 'var(--display)', fontWeight: 700 }}>Buddy → Novo lar!</div>
+              <div style={{ fontSize: 14, color: 'var(--ink)', fontFamily: 'var(--display)', fontWeight: 700 }}>
+                {destaque ? `${destaque.nome} → Novo lar!` : 'Buddy → Novo lar!'}
+              </div>
               <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>Há 2 minutos</div>
             </div>
           </div>
-          <div style={{ position: 'absolute', right: 60, bottom: 0, zIndex: 2, fontSize: 38, transform: 'rotate(20deg)' }}>🦴</div>
         </div>
       </div>
     </section>
   )
 }
-
 // ─── Animal Card ──────────────────────────────────────────────────────────────
 
 const AnimalCard = ({ animal, index }: { animal: Animal; index: number }) => {
@@ -659,6 +726,7 @@ export const Landing = () => {
   const [abrigosLoading, setAbrigosLoading] = useState(true)
   const [abrigosError, setAbrigosError] = useState(false)
   const [totalAnimais, setTotalAnimais] = useState(0)
+  const [animaisDisponiveis, setAnimaisDisponiveis] = useState<Animal[]>([])
 
   useEffect(() => {
     api.get<Abrigo[]>('/abrigos')
@@ -669,7 +737,11 @@ export const Landing = () => {
 
   useEffect(() => {
     api.get<Animal[]>('/animais')
-      .then(res => setTotalAnimais(res.data.filter((a: Animal) => a.status === 'DISPONIVEL').length))
+      .then(res => {
+        const disp = res.data.filter((a: Animal) => a.status ==='DISPONIVEL')
+        setTotalAnimais(disp.length)
+        setAnimaisDisponiveis(disp)
+      })
       .catch(() => { })
   }, [])
 
@@ -678,7 +750,7 @@ export const Landing = () => {
       <AppNavbar />
 
       <main>
-        <Hero totalAnimais={totalAnimais} totalAbrigos={abrigos.length} />
+        <Hero totalAnimais={totalAnimais} totalAbrigos={abrigos.length} animais={animaisDisponiveis}/>
         <FeaturedPets />
         <SupportRow abrigos={abrigos} />
         <PartnerShelters abrigos={abrigos} loading={abrigosLoading} error={abrigosError} />
