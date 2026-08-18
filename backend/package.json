@@ -33,5 +33,9 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "path": "^0.12.7"
+  },
+
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
