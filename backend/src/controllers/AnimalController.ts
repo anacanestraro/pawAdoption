@@ -3,6 +3,7 @@ import prisma from "../lib/client";
 import { NovoAnimalDTO } from "../dtos/AnimalDTO";
 import { AuthRequest } from "../middlewares/auth";
 import { Status } from "@prisma/client";
+import { ehDonoDoAnimal } from "../utils/authAnimal";
 
 export const listarAnimais = async (req: Request, res: Response) => {
     try {
@@ -15,6 +16,38 @@ export const listarAnimais = async (req: Request, res: Response) => {
         return res.status(200).json(animais);
     } catch (error) {
         return res.status(500).json({ error: "Erro ao buscar animais" });
+    }
+}
+
+// Lista apenas os animais do usuário logado.
+// ABRIGO   → animais com abrigo_id = usuario.id
+// ADOTANTE → animais com lar_temporario_id = usuario.id (cadastrados como lar temporário)
+export const listarMeusAnimais = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        const { id, tipo_usuario } = req.usuario;
+
+        if (tipo_usuario !== "ABRIGO" && tipo_usuario !== "ADOTANTE") {
+            return res.status(403).json({ error: "Tipo de usuário não possui animais cadastrados" });
+        }
+
+        const where =
+            tipo_usuario === "ABRIGO"
+                ? { abrigo_id: id, deleted_at: null }
+                : { lar_temporario_id: id, deleted_at: null };
+
+        const animais = await prisma.animal.findMany({
+            where,
+            include: { fotos: true },
+            orderBy: { created_at: "desc" },
+        });
+
+        return res.status(200).json(animais);
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar seus animais" });
     }
 }
 
@@ -58,17 +91,25 @@ export const cadastrarAnimal = async (req: AuthRequest<NovoAnimalDTO>, res: Resp
     }
 }
 
-export const atualizarAnimal = async (req: Request, res: Response) => {
+export const atualizarAnimal = async (req: AuthRequest<Partial<NovoAnimalDTO>>, res: Response) => {
     const { id } = req.params;
-    const dados: Partial<NovoAnimalDTO> = req.body;
+    const dados = req.body;
 
     try {
         const animalExistente = await prisma.animal.findUnique({
             where: { id: Number(id) },
         });
 
-        if (!animalExistente) {
+        if (!animalExistente || animalExistente.deleted_at) {
             return res.status(404).json({ error: "Animal não encontrado" });
+        }
+
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        if (!ehDonoDoAnimal(req.usuario, animalExistente)) {
+            return res.status(403).json({ error: "Você não tem permissão para alterar este animal" });
         }
 
         const animalAtualizado = await prisma.animal.update({
@@ -91,16 +132,24 @@ export const atualizarAnimal = async (req: Request, res: Response) => {
     }
 }
 
-export const deletarAnimal = async (req: Request, res: Response) => {
-    const  {id} = req.params;
+export const deletarAnimal = async (req: AuthRequest, res: Response) => {
+    const { id } = req.params;
 
     try {
         const animal = await prisma.animal.findUnique({
             where: { id: Number(id) }
         });
 
-        if (!animal) {
+        if (!animal || animal.deleted_at) {
             return res.status(404).json({ error: "Animal não encontrado" });
+        }
+
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        if (!ehDonoDoAnimal(req.usuario, animal)) {
+            return res.status(403).json({ error: "Você não tem permissão para alterar este animal" });
         }
 
         await prisma.animal.update({
@@ -108,44 +157,43 @@ export const deletarAnimal = async (req: Request, res: Response) => {
             data: { deleted_at: new Date() }
         });
 
-        return res.status(200).json({message: "Animal desativado com sucesso"});
-    }catch(error){
-        return res.status(500).json({error: "Erro ao desativar animal"})
-
+        return res.status(200).json({ message: "Animal desativado com sucesso" });
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao desativar animal" });
     }
 }
 
 export const uploadFotoAnimal = async (req: Request, res: Response) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const file = req.file;
 
-        if(!file) {
-            return res.status(400).json({error: "Nenhum arquivo enviado."});
+        if (!file) {
+            return res.status(400).json({ error: "Nenhum arquivo enviado." });
         }
 
-        const animal = await prisma.animal.findUnique({where: {id: Number(id)}});
-        if(!animal) {
-            return res.status(404).json({error: "Animal não encontrado."});
+        const animal = await prisma.animal.findUnique({ where: { id: Number(id) } });
+        if (!animal) {
+            return res.status(404).json({ error: "Animal não encontrado." });
         }
 
         const foto = await prisma.animalFoto.create({
             data: {
                 animal_id: Number(id),
                 url_foto: `/uploads/animais/${file.filename}`,
-                validada:false
-            }, 
+                validada: false
+            },
         });
 
         return res.status(201).json(foto);
-    }catch(error){
-        return res.status(500).json({error: "Erro ao fazer upload da foto."});
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao fazer upload da foto." });
     }
 }
 
-export const animalPorID = async (req: Request, res:Response) => {
+export const animalPorID = async (req: Request, res: Response) => {
     const { id } = req.params;
-    
+
     try {
         const animal = await prisma.animal.findUnique({
             where: { id: Number(id) },
@@ -161,10 +209,10 @@ export const animalPorID = async (req: Request, res:Response) => {
         });
         res.set('Cache-Control', 'no-store');
         if (!animal) {
-            return res.status(404).json({error: "Animal não encontrado"});
+            return res.status(404).json({ error: "Animal não encontrado" });
         }
         return res.status(200).json(animal);
-    }catch(error){
-        return res.status(500).json({error: "Erro ao buscar animal"});
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar animal" });
     }
-} 
+}
