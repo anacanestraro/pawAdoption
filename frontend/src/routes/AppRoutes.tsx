@@ -12,6 +12,7 @@ import { Cadastro } from '../pages/Cadastro'
 import { AdocaoAnimal } from '../pages/AdocaoAnimal'
 import { Solicitacoes } from '../pages/Solicitacoes'
 import { Voluntarios } from '../pages/Voluntarios'
+import { AbrigoPerfil } from '../pages/AbrigoPerfil'
 
 export const AppRoutes = () => {
   return (
@@ -26,6 +27,7 @@ export const AppRoutes = () => {
         <Route element={<Layout />}>
           <Route path="/home"              element={<AnimalFeed />} />
           <Route path="/abrigos"           element={<AbrigoFeed />} />
+          <Route path="/abrigos/:id"       element={<AbrigoPerfil />} />
           <Route path="/animais/cadastrar" element={<CadastrarAnimal />} />
           <Route path="/adotar/:id" element={<AdocaoAnimal />} />
           <Route path="/home/animais"      element={<h1>Meus Animais</h1>} />

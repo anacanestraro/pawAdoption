@@ -14,7 +14,9 @@ interface AppNavbarProps {
 
 const LINKS_ADOTANTE: NavLink[] = [
   { label: 'Animais', to: '/home' },
-  { label: 'Contate-nos', to: '/contato' },
+  { label: 'Abrigos', to: '/abrigos' },
+  { label: 'Voluntariado', to: '/home/voluntarios' },
+  { label: 'Solicitações', to: '/home/solicitacoes' },
   { label: 'Sobre', to: '/sobre' },
 ]
 const LINKS_ABRIGO: NavLink[] = [
@@ -230,6 +232,15 @@ export const AppNavbar = ({ links }: AppNavbarProps) => {
                       <div className="appnav-dropdown-role">{usuario.tipo_usuario?.toLowerCase()}</div>
                     </div>
                     <Link to="/home" className="appnav-dropdown-link">Ir para o app →</Link>
+                    {usuario.tipo_usuario === 'ABRIGO' && (
+                      <Link
+                        to={`/abrigos/${usuario.id}`}
+                        className="appnav-dropdown-link"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        Meu perfil
+                      </Link>
+                    )}
                     <button className="appnav-dropdown-btn" onClick={() => { logout(); navigate('/login') }}>Sair</button>
                   </div>
                 )}

@@ -4,8 +4,10 @@
  *
  * Endpoints:
  *   GET /abrigos  → lista abrigos ativos (inclui usuario + endereco)
- *   POST /voluntarios/solicitar/:abrigo_id → voluntariar (requer JWT)
  *   POST /denuncias/denunciar/:id          → denunciar   (requer JWT)
+ *
+ * Clicar no card abre o perfil do abrigo (/abrigos/:id),
+ * onde fica a candidatura de voluntariado.
  */
 
 import '../styles/Feed.css'
@@ -99,13 +101,12 @@ const SheltherPhoto = ({ nome, index }: { nome: string; index: number }) => {
 
 // ─── ShelterCard ─────────────────────────────────────────────────────────────
 const ShelterCard = ({
-  abrigo, index, onVoluntariar, onDenunciar, voluntariando,
+  abrigo, index, onAbrir, onDenunciar,
 }: {
   abrigo: AbrigoFull
   index: number
-  onVoluntariar: (id: number) => void
+  onAbrir: (id: number) => void
   onDenunciar: (id: number) => void
-  voluntariando: boolean
 }) => {
   const [hovered, setHovered] = useState(false)
   const nome = abrigo.usuario.nome
@@ -117,9 +118,14 @@ const ShelterCard = ({
   return (
     <article
       className="shelter-card"
+      onClick={() => onAbrir(abrigo.usuario_id)}
+      onKeyDown={e => { if (e.key === 'Enter') onAbrir(abrigo.usuario_id) }}
+      role="link"
+      tabIndex={0}
+      aria-label={`Ver perfil de ${nome}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ transform: hovered ? 'translateY(-5px)' : 'translateY(0)' }}
+      style={{ transform: hovered ? 'translateY(-5px)' : 'translateY(0)', cursor: 'pointer' }}
     >
       {/* Foto / placeholder */}
       <div style={{ position: 'relative', padding: '12px 12px 0' }}>
@@ -130,7 +136,7 @@ const ShelterCard = ({
           {isNovo && (
             <span className="badge-novo">NOVO</span>
           )}
-          {abrigo.capacidade && (
+          {!!abrigo.capacidade && (
             <span className="badge-cap">
               {abrigo.capacidade} pets
             </span>
@@ -162,7 +168,7 @@ const ShelterCard = ({
 
         {/* Stats */}
         <div className="shelter-stats">
-          {abrigo.capacidade && (
+          {!!abrigo.capacidade && (
             <div className="stat">
               <span className="stat-n">{abrigo.capacidade}</span>
               <span className="stat-l">Capacidade</span>
@@ -178,6 +184,7 @@ const ShelterCard = ({
                 href={abrigo.site_url.startsWith('http') ? abrigo.site_url : `https://${abrigo.site_url}`}
                 target="_blank" rel="noreferrer"
                 className="stat-link"
+                onClick={e => e.stopPropagation()}
               >
                 🌐 Site
               </a>
@@ -185,18 +192,18 @@ const ShelterCard = ({
           )}
         </div>
 
-        {/* Ações */}
-        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+        {/* Ações — marginTop auto empurra para o rodapé do card,
+            alinhando os botões mesmo quando faltam descrição ou números */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 16 }}>
           <button
             className="btn-voluntariar"
-            onClick={() => onVoluntariar(abrigo.usuario_id)}
-            disabled={voluntariando}
+            onClick={e => { e.stopPropagation(); onAbrir(abrigo.usuario_id) }}
           >
-            {voluntariando ? '⏳' : '🙌'} Voluntariar
+            Ver perfil →
           </button>
           <button
             className="btn-denunciar"
-            onClick={() => onDenunciar(abrigo.usuario_id)}
+            onClick={e => { e.stopPropagation(); onDenunciar(abrigo.usuario_id) }}
             title="Denunciar"
           >⚑</button>
         </div>
@@ -225,7 +232,6 @@ export const AbrigoFeed = () => {
   const [estadoFiltro, setEstadoFiltro] = useState('')
   const [ordemAtiva, setOrdemAtiva] = useState<'recentes'|'nome'|'capacidade'>('recentes')
 
-  const [volId, setVolId]         = useState<number | null>(null)
   const [toast, setToast]         = useState<{ msg: string; type: 'success'|'error' } | null>(null)
 
   const showToast = (msg: string, type: 'success'|'error') => {
@@ -264,18 +270,7 @@ export const AbrigoFeed = () => {
     return lista
   }, [abrigos, filtroAtivo, busca, estadoFiltro, ordemAtiva])
 
-  const handleVoluntariar = async (id: number) => {
-    if (!usuario) { navigate('/login'); return }
-    setVolId(id)
-    try {
-      await api.post(`/voluntarios/solicitar/${id}`)
-      showToast('Solicitação de voluntariado enviada! 🐾', 'success')
-    } catch {
-      showToast('Erro ao enviar solicitação. Tente novamente.', 'error')
-    } finally {
-      setVolId(null)
-    }
-  }
+  const handleAbrir = (id: number) => navigate(`/abrigos/${id}`)
 
   const handleDenunciar = async (id: number) => {
     if (!usuario) { navigate('/login'); return }
@@ -426,9 +421,8 @@ export const AbrigoFeed = () => {
                   key={a.usuario_id}
                   abrigo={a}
                   index={i}
-                  onVoluntariar={handleVoluntariar}
+                  onAbrir={handleAbrir}
                   onDenunciar={handleDenunciar}
-                  voluntariando={volId === a.usuario_id}
                 />
               ))
             )}
@@ -441,5 +435,6 @@ export const AbrigoFeed = () => {
     </>
   )
 }
+
 
 export default AbrigoFeed

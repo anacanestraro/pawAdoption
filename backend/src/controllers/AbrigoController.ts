@@ -3,6 +3,18 @@ import prisma from "../lib/client";
 import { NovoAbrigoDTO } from "../dtos/AbrigoDTO";
 import bcrypt from "bcryptjs";
 
+// Campos públicos do usuário do abrigo (nunca expor senha_hash)
+const selectUsuarioPublico = {
+    select: {
+        id: true,
+        nome: true,
+        email: true,
+        telefone: true,
+        created_at: true,
+        endereco: true,
+    },
+};
+
 export const listarAbrigos = async (req: Request, res: Response) => {
     try {
         const abrigos = await prisma.abrigo.findMany({
@@ -10,12 +22,55 @@ export const listarAbrigos = async (req: Request, res: Response) => {
                 deleted_at: null,
                 usuario: {ativo: true},
             },
-            include: {usuario:true},
+            include: {usuario: selectUsuarioPublico},
         });
 
         return res.status(200).json(abrigos);
     }catch(error) {
         return res.status(500).json({error: "Erro ao buscar abrigos"});
+    }
+}
+
+// Perfil público de um abrigo: dados, contato, animais disponíveis e números
+export const buscarAbrigoPorId = async (req: Request, res: Response) => {
+    const {id} = req.params;
+
+    try {
+        const abrigo = await prisma.abrigo.findFirst({
+            where: {
+                usuario_id: Number(id),
+                deleted_at: null,
+                usuario: {ativo: true},
+            },
+            include: {
+                usuario: selectUsuarioPublico,
+                animais: {
+                    where: {
+                        deleted_at: null,
+                        status: {in: ["DISPONIVEL", "PROCESSO_ADOCAO"]},
+                    },
+                    include: {fotos: true},
+                    orderBy: {id: "desc"},
+                },
+            },
+        });
+
+        if(!abrigo) {
+            return res.status(404).json({error: "Abrigo não encontrado"});
+        }
+
+        const [totalAdotados, totalVoluntarios] = await Promise.all([
+            prisma.animal.count({
+                where: {abrigo_id: Number(id), status: "ADOTADO", deleted_at: null},
+            }),
+            prisma.voluntario.count({
+                where: {abrigo_id: Number(id), status: "ATIVO"},
+            }),
+        ]);
+
+        return res.status(200).json({...abrigo, totalAdotados, totalVoluntarios});
+    }catch(error) {
+        return res.status(500).json({error: "Erro ao buscar abrigo"});
     }
 }
 

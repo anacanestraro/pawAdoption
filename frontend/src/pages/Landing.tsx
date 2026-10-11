@@ -6,11 +6,13 @@
  *   GET  /animais                          → listar animais disponíveis (público)
  *   GET  /abrigos                          → listar abrigos ativos (público, inclui usuario)
  *   POST /auth/login                       → login (via AuthContext)
- *   POST /voluntarios/solicitar/:abrigo_id → voluntariado (requer JWT)
+ *
+ * A candidatura de voluntariado acontece no perfil do abrigo (/abrigos/:id);
+ * aqui o usuário só escolhe o abrigo e é levado até lá.
  */
 
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import api from '../api/api'
@@ -39,7 +41,6 @@ const STRINGS: Record<string, string> = {
   'support.vol.desc': 'Passeie com cães, cuide de filhotes, ajude em eventos. Só 4 horas por mês fazem uma grande diferença.',
   'support.vol.b1': 'Horário flexível', 'support.vol.b2': 'Treinamento gratuito', 'support.vol.b3': 'Aberto para maiores de 16',
   'support.vol.cta': 'Quero me voluntariar!', 'support.vol.login': 'Entre para se voluntariar',
-  'support.vol.success': 'Solicitação enviada! O abrigo entrará em contato em breve. 🐾',
   'support.vol.pick': 'Escolha um abrigo para se voluntariar:',
   'support.donate.eyebrow': 'Faça a diferença',
   'support.donate.title': 'Ajude a alimentar os pets dos abrigos. 🦴',
@@ -483,18 +484,13 @@ const FeaturedPets = () => {
 const SupportRow = ({ abrigos }: { abrigos: Abrigo[] }) => {
   const { t } = useI18n()
   const { usuario } = useAuth()
+  const navigate = useNavigate()
   const [abrigoSelecionado, setAbrigoSelecionado] = useState<number | null>(null)
-  const [volStatus, setVolStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
-  const handleVoluntariar = async () => {
-    if (!usuario || !abrigoSelecionado) return
-    setVolStatus('loading')
-    try {
-      await api.post(`/voluntarios/solicitar/${abrigoSelecionado}`)
-      setVolStatus('success')
-    } catch {
-      setVolStatus('error')
-    }
+  // Leva ao perfil do abrigo, onde a pessoa informa disponibilidade e habilidades
+  const handleVoluntariar = () => {
+    if (!abrigoSelecionado) return
+    navigate(`/abrigos/${abrigoSelecionado}`)
   }
 
   return (
@@ -547,16 +543,12 @@ const SupportRow = ({ abrigos }: { abrigos: Abrigo[] }) => {
               ))}
             </ul>
 
-            {volStatus === 'success' ? (
-              <div style={{ marginTop: 18, padding: '14px 18px', borderRadius: 14, background: '#e8f5e9', color: '#2e7d32', fontSize: 14, fontWeight: 600 }}>
-                {t('support.vol.success')}
-              </div>
-            ) : usuario ? (
+            {usuario ? (
               <div style={{ marginTop: 18, position: 'relative', zIndex: 1 }}>
                 {abrigos.length > 0 && (
                   <div style={{ marginBottom: 10 }}>
                     <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 6 }}>{t('support.vol.pick')}</label>
-                    <select value={abrigoSelecionado ?? ''} onChange={e => setAbrigoSelecionado(Number(e.target.value))} style={{ width: '100%', padding: '10px 14px', borderRadius: 12, border: '2px solid var(--blue-100)', background: 'var(--paper)', fontSize: 14, color: 'var(--ink)', cursor: 'pointer' }}>
+                    <select value={abrigoSelecionado ?? ''} onChange={e => setAbrigoSelecionado(e.target.value ? Number(e.target.value) : null)} style={{ width: '100%', padding: '10px 14px', borderRadius: 12, border: '2px solid var(--blue-100)', background: 'var(--paper)', fontSize: 14, color: 'var(--ink)', cursor: 'pointer' }}>
                       <option value="">Selecione...</option>
                       {abrigos.map(a => (
                         <option key={a.usuario_id} value={a.usuario_id}>
@@ -566,10 +558,9 @@ const SupportRow = ({ abrigos }: { abrigos: Abrigo[] }) => {
                     </select>
                   </div>
                 )}
-                <button onClick={handleVoluntariar} disabled={!abrigoSelecionado || volStatus === 'loading'} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 18px', borderRadius: 999, background: abrigoSelecionado ? 'var(--orange)' : 'var(--line)', color: abrigoSelecionado ? 'white' : 'var(--ink-3)', border: 'none', fontSize: 15, fontWeight: 800, fontFamily: 'var(--display)', cursor: abrigoSelecionado ? 'pointer' : 'not-allowed', boxShadow: abrigoSelecionado ? 'var(--shadow-orange)' : 'none' }}>
-                  {volStatus === 'loading' ? '...' : `${t('support.vol.cta')} ↗`}
+                <button onClick={handleVoluntariar} disabled={!abrigoSelecionado} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 18px', borderRadius: 999, background: abrigoSelecionado ? 'var(--orange)' : 'var(--line)', color: abrigoSelecionado ? 'white' : 'var(--ink-3)', border: 'none', fontSize: 15, fontWeight: 800, fontFamily: 'var(--display)', cursor: abrigoSelecionado ? 'pointer' : 'not-allowed', boxShadow: abrigoSelecionado ? 'var(--shadow-orange)' : 'none' }}>
+                  {t('support.vol.cta')} ↗
                 </button>
-                {volStatus === 'error' && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--orange)' }}>Erro ao enviar. Tente novamente.</p>}
               </div>
             ) : (
               <Link to="/login" style={{ marginTop: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 18px', borderRadius: 999, background: 'var(--orange)', color: 'white', textDecoration: 'none', fontSize: 15, fontWeight: 800, fontFamily: 'var(--display)', boxShadow: 'var(--shadow-orange)', position: 'relative', zIndex: 1 }}>
@@ -593,9 +584,9 @@ const PartnerShelters = ({ abrigos, loading, error }: { abrigos: Abrigo[]; loadi
         eyebrow={t('shelters.eyebrow')}
         title={t('shelters.title')}
         action={
-          <button style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 20px', borderRadius: 999, background: 'var(--blue)', color: 'white', border: 'none', fontSize: 14, fontWeight: 800, fontFamily: 'var(--display)', boxShadow: '0 4px 0 var(--blue-700)', cursor: 'pointer' }}>
+          <Link to="/abrigos" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 20px', borderRadius: 999, background: 'var(--blue)', color: 'white', border: 'none', fontSize: 14, fontWeight: 800, fontFamily: 'var(--display)', boxShadow: '0 4px 0 var(--blue-700)', cursor: 'pointer', textDecoration: 'none' }}>
             {t('shelters.viewAll')} →
-          </button>
+          </Link>
         }
       />
       {loading ? (
@@ -642,9 +633,9 @@ const PartnerShelters = ({ abrigos, loading, error }: { abrigos: Abrigo[]; loadi
                       </div>
                     )}
                   </div>
-                  <button style={{ width: '100%', padding: '12px 0', borderRadius: 999, background: 'var(--blue-50)', border: '2px solid var(--blue-100)', color: 'var(--blue)', fontSize: 14, fontWeight: 800, fontFamily: 'var(--display)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  <Link to={`/abrigos/${a.usuario_id}`} style={{ width: '100%', padding: '12px 0', borderRadius: 999, background: 'var(--blue-50)', border: '2px solid var(--blue-100)', color: 'var(--blue)', fontSize: 14, fontWeight: 800, fontFamily: 'var(--display)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, textDecoration: 'none' }}>
                     {t('shelters.visit')} ↗
-                  </button>
+                  </Link>
                 </div>
               </article>
             </div>
