@@ -10,6 +10,7 @@ import { Landing } from '../pages/Landing'
 import { Login } from '../pages/Login'
 import { Cadastro } from '../pages/Cadastro'
 import { AdocaoAnimal } from '../pages/AdocaoAnimal'
+import { Solicitacoes } from '../pages/Solicitacoes'
 
 export const AppRoutes = () => {
   return (
@@ -28,7 +29,7 @@ export const AppRoutes = () => {
           <Route path="/adotar/:id" element={<AdocaoAnimal />} />
           <Route path="/home/animais"      element={<h1>Meus Animais</h1>} />
           <Route path="/home/voluntarios"  element={<h1>Voluntários</h1>} />
-          <Route path="/home/solicitacoes" element={<h1>Solicitações</h1>} />
+          <Route path="/home/solicitacoes" element={<Solicitacoes />} />
           <Route path="/contato"           element={<h1>Contato</h1>} />
           <Route path="/sobre"             element={<h1>Sobre</h1>} />
         </Route>
