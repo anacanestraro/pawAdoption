@@ -3,6 +3,11 @@ import prisma from "../lib/client";
 import { AuthRequest } from "../middlewares/auth";
 import { NovoVoluntarioDto} from "../dtos/VoluntarioDTO";
 
+// Dados de contato incluídos nas listagens
+const selectContato = {
+    select: { id: true, nome: true, email: true, telefone: true }
+};
+
 export const listarVoluntariosDoAbrigo = async (req: Request, res: Response) => {
     try {
 
@@ -13,7 +18,7 @@ export const listarVoluntariosDoAbrigo = async (req: Request, res: Response) => 
                 status: 'ATIVO'
             },
             include: {
-                adotante: true,
+                adotante: { include: { usuario: selectContato } },
             }
         });
         return res.status(200).json(voluntarios);
@@ -35,7 +40,7 @@ export const listarSolicitacoesPendentes = async (req: AuthRequest, res: Respons
                 status: 'PENDENTE'
             },
             include: {
-                adotante: true,
+                adotante: { include: { usuario: selectContato } },
             }
         });
         return res.status(200).json(solicitacoes);
@@ -44,16 +49,44 @@ export const listarSolicitacoesPendentes = async (req: AuthRequest, res: Respons
     }
 }
 
+// Todos os voluntários (qualquer status) do abrigo logado — alimenta a tela de gestão
+export const listarVoluntariosRecebidos = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        if (req.usuario.tipo_usuario !== 'ABRIGO') {
+            return res.status(403).json({ error: "Apenas abrigos podem gerenciar voluntários" });
+        }
+
+        const voluntarios = await prisma.voluntario.findMany({
+            where: { abrigo_id: req.usuario.id },
+            include: {
+                adotante: { include: { usuario: selectContato } },
+            },
+            orderBy: { data_cadastro: "desc" }
+        });
+        return res.status(200).json(voluntarios);
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar voluntários" });
+    }
+}
+
 export const listarMinhasSolicitacoes = async(req: AuthRequest, res: Response) => {
     try {
-        const adotante_id = req.usuario?.id;
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
         const solicitacoes = await prisma.voluntario.findMany({
             where: {
-                adotante_id: Number(adotante_id),
+                adotante_id: req.usuario.id,
             },
             include: {
-                abrigo: true,
-            }
+                abrigo: { include: { usuario: selectContato } },
+            },
+            orderBy: { data_cadastro: "desc" }
         });
         return res.status(200).json(solicitacoes);
     } catch(error) {
@@ -63,24 +96,32 @@ export const listarMinhasSolicitacoes = async(req: AuthRequest, res: Response) =
 
 export const solicitarVoluntario = async (req: AuthRequest<NovoVoluntarioDto>, res: Response) => {
     try {
-        const adotante_id = req.usuario?.id;
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        if (req.usuario.tipo_usuario !== 'ADOTANTE') {
+            return res.status(403).json({ error: "Apenas adotantes podem se candidatar como voluntários" });
+        }
+
+        const adotante_id = req.usuario.id;
         const { abrigo_id } = req.params;
         const { disponibilidade, habilidades } = req.body;
-    
+
         const solicitacao_existente = await prisma.voluntario.findFirst({
             where: {
-                adotante_id: Number(adotante_id),
+                adotante_id: adotante_id,
                 abrigo_id: Number(abrigo_id),
             }
         });
-    
+
         if (solicitacao_existente) {
             return res.status(409).json({ error: "Você já possui uma solicitação para esse abrigo"});
         }
-    
+
         const solicitacao = await prisma.voluntario.create({
             data: {
-                adotante_id: Number(adotante_id),
+                adotante_id: adotante_id,
                 abrigo_id: Number(abrigo_id),
                 disponibilidade,
                 habilidades,
@@ -96,11 +137,19 @@ export const solicitarVoluntario = async (req: AuthRequest<NovoVoluntarioDto>, r
 export const aprovarVoluntario = async (req: AuthRequest, res: Response) => {
     try {
         const { id } = req.params;
+
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
         const solicitacao = await prisma.voluntario.findUnique({
             where: { id: Number(id) }
         });
         if (!solicitacao) {
             return res.status(404).json({ error: "Solicitação não encontrada"});
+        }
+        if (solicitacao.abrigo_id !== req.usuario.id && req.usuario.tipo_usuario !== 'ADMINISTRADOR') {
+            return res.status(403).json({ error: "Apenas o abrigo responsável pode aprovar este voluntário" });
         }
         if (solicitacao.status !== "PENDENTE") {
             return res.status(400).json({error: "Solicitação já foi processada"});
@@ -111,50 +160,66 @@ export const aprovarVoluntario = async (req: AuthRequest, res: Response) => {
         });
         return res.status(200).json(aprovado);
     } catch (error) {
-        return res.status(500).json({ error: "Errro ao aprovar voluntário" });
+        return res.status(500).json({ error: "Erro ao aprovar voluntário" });
     }
 }
 
 export const rejeitarVoluntario = async (req: AuthRequest, res: Response) => {
     try {
         const { id } = req.params;
+
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
         const solicitacao = await prisma.voluntario.findUnique({
             where: { id: Number(id) }
         });
         if (!solicitacao) {
             return res.status(404).json({ error: "Solicitação não encontrada"});
         }
+        if (solicitacao.abrigo_id !== req.usuario.id && req.usuario.tipo_usuario !== 'ADMINISTRADOR') {
+            return res.status(403).json({ error: "Apenas o abrigo responsável pode rejeitar este voluntário" });
+        }
         if (solicitacao.status !== "PENDENTE") {
             return res.status(400).json({error: "Solicitação já foi processada"});
         }
-        const aprovado = await prisma.voluntario.update({
+        const rejeitado = await prisma.voluntario.update({
             where: { id: Number(id) },
             data: { status: "REJEITADO" }
         });
-        return res.status(200).json(aprovado);
+        return res.status(200).json(rejeitado);
     } catch (error) {
-        return res.status(500).json({ error: "Errro ao rejeitar voluntário" });
+        return res.status(500).json({ error: "Erro ao rejeitar voluntário" });
     }
 }
 
 export const inativarVoluntario = async (req: AuthRequest, res: Response) => {
     try {
         const { id } = req.params;
+
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
         const solicitacao = await prisma.voluntario.findUnique({
             where: { id: Number(id) }
         });
         if (!solicitacao) {
             return res.status(404).json({ error: "Solicitação não encontrada"});
         }
+        if (solicitacao.abrigo_id !== req.usuario.id && req.usuario.tipo_usuario !== 'ADMINISTRADOR') {
+            return res.status(403).json({ error: "Apenas o abrigo responsável pode inativar este voluntário" });
+        }
         if (solicitacao.status !== "ATIVO") {
             return res.status(400).json({error: "Voluntário não está ativo"});
         }
-        const aprovado = await prisma.voluntario.update({
+        const inativado = await prisma.voluntario.update({
             where: { id: Number(id) },
             data: { status: "INATIVO" }
         });
-        return res.status(200).json(aprovado);
+        return res.status(200).json(inativado);
     } catch (error) {
-        return res.status(500).json({ error: "Errro ao inativar voluntário" });
+        return res.status(500).json({ error: "Erro ao inativar voluntário" });
     }
 }

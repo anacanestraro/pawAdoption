@@ -5,6 +5,7 @@ import { autenticarJWT } from "../middlewares/auth";
 const router = Router();
 
 router.get("/abrigo/:abrigo_id", VoluntarioController.listarVoluntariosDoAbrigo);
+router.get("/recebidos", autenticarJWT, VoluntarioController.listarVoluntariosRecebidos);
 router.get("/solicitacoes/:abrigo_id", autenticarJWT, VoluntarioController.listarSolicitacoesPendentes);
 router.get("/minhas_solicitacoes", autenticarJWT, VoluntarioController.listarMinhasSolicitacoes);
 router.post("/solicitar/:abrigo_id", autenticarJWT, VoluntarioController.solicitarVoluntario);
