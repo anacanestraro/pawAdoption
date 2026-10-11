@@ -9,8 +9,9 @@
 
 import '../styles/AdocaoAnimal.css'
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../api/api'
+import { useAuth } from '../context/AuthContext'
 
 // ─── Types locais ─────────────────────────────────────────────────────────────
 
@@ -151,6 +152,7 @@ const ModalConfirmacao = ({
 export const AdocaoAnimal = () => {
   const { id }   = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { usuario } = useAuth()
 
   const [animal,   setAnimal]   = useState<AnimalDetalhe | null>(null)
   const [loading,  setLoading]  = useState(true)
@@ -238,6 +240,14 @@ export const AdocaoAnimal = () => {
   const anuncianteEmail    = animal.abrigo ? animal.abrigo.usuario.email    : animal.lar_temporario?.usuario.email
   const anuncianteTelefone = animal.abrigo ? animal.abrigo.usuario.telefone : animal.lar_temporario?.usuario.telefone
 
+  // Quem pode solicitar: só adotantes que não anunciaram o próprio animal
+  const ehDono = !!usuario && (
+    animal.abrigo?.usuario_id === usuario.id ||
+    animal.lar_temporario?.usuario_id === usuario.id
+  )
+  const ehAdotante    = usuario?.tipo_usuario === 'ADOTANTE'
+  const podeSolicitar = ehAdotante && !ehDono && !indisponivel
+
   // ─── Layout ───────────────────────────────────────────────────────────────
 
   return (
@@ -250,8 +260,12 @@ export const AdocaoAnimal = () => {
             ←
           </button>
           <div>
-            <h1 className="adocao-titulo">{emoji} Adotar {animal.nome}</h1>
-            <p className="adocao-subtitulo">Revise as informações e confirme sua solicitação de adoção</p>
+            <h1 className="adocao-titulo">{emoji} {ehDono ? animal.nome : `Adotar ${animal.nome}`}</h1>
+            <p className="adocao-subtitulo">
+              {ehDono
+                ? 'Este é um animal que você anunciou'
+                : 'Revise as informações e confirme sua solicitação de adoção'}
+            </p>
           </div>
         </div>
       </div>
@@ -330,6 +344,14 @@ export const AdocaoAnimal = () => {
                   <span className="adocao-anunciante-nome">{anuncianteNome}</span>
                   {anuncianteEmail    && <span className="adocao-anunciante-contato">✉ {anuncianteEmail}</span>}
                   {anuncianteTelefone && <span className="adocao-anunciante-contato">📞 {anuncianteTelefone}</span>}
+                  {animal.abrigo && (
+                    <Link
+                      to={`/abrigos/${animal.abrigo.usuario_id}`}
+                      style={{ marginTop: 4, fontSize: '0.82rem', fontWeight: 800, color: 'var(--blue)', textDecoration: 'none' }}
+                    >
+                      Ver perfil do abrigo →
+                    </Link>
+                  )}
                 </div>
               </div>
             </section>
@@ -345,24 +367,51 @@ export const AdocaoAnimal = () => {
               </div>
             )}
 
+            {ehDono && (
+              <div className="adocao-aviso">
+                <span>ℹ️</span>
+                <p>
+                  Você anunciou {animal.nome}, então não pode solicitar a adoção dele.
+                  Os pedidos de interessados aparecem em Solicitações.
+                </p>
+              </div>
+            )}
+
+            {!ehDono && !ehAdotante && (
+              <div className="adocao-aviso">
+                <span>ℹ️</span>
+                <p>Apenas adotantes podem solicitar a adoção de um animal.</p>
+              </div>
+            )}
+
             <div className="adocao-acoes">
               <button className="adocao-btn-cancelar" onClick={() => navigate(-1)}>
                 Voltar
               </button>
-              <button
-                className="adocao-btn-confirmar"
-                onClick={() => setModal(true)}
-                disabled={indisponivel}
-              >
-                ❤️ Quero adotar
-              </button>
+
+              {ehDono ? (
+                <button
+                  className="adocao-btn-confirmar"
+                  onClick={() => navigate('/home/solicitacoes')}
+                >
+                  📋 Ver solicitações
+                </button>
+              ) : ehAdotante && (
+                <button
+                  className="adocao-btn-confirmar"
+                  onClick={() => setModal(true)}
+                  disabled={!podeSolicitar}
+                >
+                  ❤️ Quero adotar
+                </button>
+              )}
             </div>
 
           </div>
         </div>
       </div>
 
-      {modal && (
+      {modal && podeSolicitar && (
         <ModalConfirmacao
           animal={animal}
           enviando={enviando}
