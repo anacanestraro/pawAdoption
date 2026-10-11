@@ -2,6 +2,21 @@ import { Request, Response } from "express";
 import prisma from "../lib/client";
 import { AtualizarSolicitacaoDTO, NovaSolicitacaoDTO } from "../dtos/SolicitacaoAdocaoDTO";
 import { AuthRequest } from "../middlewares/auth";
+import { ehDonoDoAnimal } from "../utils/authAnimal";
+
+// Dados incluídos nas listagens para a tela de gerenciamento
+const includeSolicitacao = {
+    animal: {
+        include: { fotos: true }
+    },
+    adotante: {
+        include: {
+            usuario: {
+                select: { id: true, nome: true, email: true, telefone: true }
+            }
+        }
+    }
+};
 
 export const listarSolicitacoes = async (req: Request, res: Response) => {
     try {
@@ -14,6 +29,52 @@ export const listarSolicitacoes = async (req: Request, res: Response) => {
         return res.status(200).json(solicitacoes);
     } catch (error) {
         return res.status(500).json({ error: "Erro ao buscar solicitações" });
+    }
+}
+
+// Solicitações feitas pelo adotante logado
+export const listarMinhasSolicitacoes = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        const solicitacoes = await prisma.solicitacaoAdocao.findMany({
+            where: { adotante_id: req.usuario.id },
+            include: includeSolicitacao,
+            orderBy: { data_solicitacao: "desc" }
+        });
+
+        return res.status(200).json(solicitacoes);
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar suas solicitações" });
+    }
+}
+
+// Solicitações recebidas para os animais do usuário logado (abrigo ou lar temporário)
+export const listarSolicitacoesRecebidas = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        const solicitacoes = await prisma.solicitacaoAdocao.findMany({
+            where: {
+                animal: {
+                    deleted_at: null,
+                    OR: [
+                        { abrigo_id: req.usuario.id },
+                        { lar_temporario_id: req.usuario.id }
+                    ]
+                }
+            },
+            include: includeSolicitacao,
+            orderBy: { data_solicitacao: "desc" }
+        });
+
+        return res.status(200).json(solicitacoes);
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar solicitações recebidas" });
     }
 }
 
@@ -67,7 +128,6 @@ export const solicitarAdocao = async (req:AuthRequest<NovaSolicitacaoDTO>, res: 
     } catch (error){
         return res.status(500).json({ error: "Erro ao criar solicitação" });
     }
-
 }
 
 export const atualizarSolicitacao = async (req:AuthRequest<AtualizarSolicitacaoDTO>, res: Response) => {
@@ -95,10 +155,45 @@ export const atualizarSolicitacao = async (req:AuthRequest<AtualizarSolicitacaoD
                 return res.status(403).json({ error: "Você só pode cancelar suas próprias solicitações" });
             }
         } else {
-            if (req.usuario.tipo_usuario !== 'ABRIGO' && req.usuario.tipo_usuario !== 'ADMINISTRADOR') {
-                return res.status(403).json({ error: "Apenas abrigos ou administradores podem aprovar ou rejeitar uma solicitação" });
+            if (!ehDonoDoAnimal(req.usuario, solicitacao.animal)) {
+                return res.status(403).json({ error: "Apenas o responsável pelo animal pode aprovar ou rejeitar esta solicitação" });
             }
         }
+
+        if (status === 'APROVADA') {
+            if (solicitacao.animal.status === 'ADOTADO') {
+                return res.status(400).json({ error: "Este animal já foi adotado" });
+            }
+
+            const agora = new Date();
+
+            // Aprova esta, rejeita as outras pendentes do mesmo animal e marca o animal como adotado
+            const [solicitacaoAtualizada] = await prisma.$transaction([
+                prisma.solicitacaoAdocao.update({
+                    where: { id: Number(id) },
+                    data: { status: 'APROVADA', data_resposta: agora }
+                }),
+                prisma.solicitacaoAdocao.updateMany({
+                    where: {
+                        animal_id: solicitacao.animal_id,
+                        status: 'PENDENTE',
+                        id: { not: Number(id) }
+                    },
+                    data: { status: 'REJEITADA', data_resposta: agora }
+                }),
+                prisma.animal.update({
+                    where: { id: solicitacao.animal_id },
+                    data: {
+                        status: 'ADOTADO',
+                        adotante_id: solicitacao.adotante_id,
+                        data_adocao: agora
+                    }
+                })
+            ]);
+
+            return res.status(200).json(solicitacaoAtualizada);
+        }
+
         const solicitacaoAtualizada = await prisma.solicitacaoAdocao.update({
             where: { id: Number(id) },
             data: {
@@ -107,16 +202,9 @@ export const atualizarSolicitacao = async (req:AuthRequest<AtualizarSolicitacaoD
             }
         });
 
-        if (status === 'APROVADA') {
-            await prisma.animal.update({
-                where: { id: solicitacao.animal_id},
-                data: {
-                    status: 'ADOTADO',
-                    adotante_id: solicitacao.adotante_id,
-                    data_adocao: new Date()
-                }
-            })
-        } else if (status === 'REJEITADA' || status === 'CANCELADA') {
+        // Só devolve o animal para DISPONIVEL se ele estava em processo,
+        // nunca se já foi adotado
+        if (solicitacao.animal.status === 'PROCESSO_ADOCAO') {
             await prisma.animal.update({
                 where: { id: solicitacao.animal_id },
                 data: { status: 'DISPONIVEL' }
