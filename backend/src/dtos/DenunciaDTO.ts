@@ -1,7 +1,6 @@
 export interface NovaDenunciaDTO {
-    motivo?: string;
+    motivo: string;
 }
-export interface AtualizarDenunciaDTO {
-    status: 'PENDENTE' | 'RESOLVIDA';
-    data_resolucao?: Date;
+export interface ResolverDenunciaDTO {
+    acao: 'REMOVER' | 'MANTER';
 }

@@ -13,6 +13,7 @@ import { AdocaoAnimal } from '../pages/AdocaoAnimal'
 import { Solicitacoes } from '../pages/Solicitacoes'
 import { Voluntarios } from '../pages/Voluntarios'
 import { AbrigoPerfil } from '../pages/AbrigoPerfil'
+import { AdminDenuncias } from '../pages/AdminDenuncias'
 
 export const AppRoutes = () => {
   return (
@@ -43,7 +44,7 @@ export const AppRoutes = () => {
         <Route element={<AdminLayout />}>
           <Route path="/admin"            element={<Navigate to="/admin/validacoes" replace />} />
           <Route path="/admin/validacoes" element={<AdminValidacoes />} />
-          <Route path="/admin/denuncias"  element={<h1>Denúncias</h1>} />
+          <Route path="/admin/denuncias"  element={<AdminDenuncias />} />
           <Route path="/admin/usuarios"   element={<h1>Usuários</h1>} />
         </Route>
       </Route>

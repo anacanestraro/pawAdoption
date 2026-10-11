@@ -4,16 +4,15 @@
  *
  * Endpoints:
  *   GET /abrigos  → lista abrigos ativos (inclui usuario + endereco)
- *   POST /denuncias/denunciar/:id          → denunciar   (requer JWT)
  *
  * Clicar no card abre o perfil do abrigo (/abrigos/:id),
  * onde fica a candidatura de voluntariado.
+ * Denúncias são feitas por anúncio de animal, na tela do animal.
  */
 
 import '../styles/Feed.css'
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import api from '../api/api'
 import type { Abrigo } from '../types'
 
@@ -101,12 +100,11 @@ const SheltherPhoto = ({ nome, index }: { nome: string; index: number }) => {
 
 // ─── ShelterCard ─────────────────────────────────────────────────────────────
 const ShelterCard = ({
-  abrigo, index, onAbrir, onDenunciar,
+  abrigo, index, onAbrir,
 }: {
   abrigo: AbrigoFull
   index: number
   onAbrir: (id: number) => void
-  onDenunciar: (id: number) => void
 }) => {
   const [hovered, setHovered] = useState(false)
   const nome = abrigo.usuario.nome
@@ -201,25 +199,14 @@ const ShelterCard = ({
           >
             Ver perfil →
           </button>
-          <button
-            className="btn-denunciar"
-            onClick={e => { e.stopPropagation(); onDenunciar(abrigo.usuario_id) }}
-            title="Denunciar"
-          >⚑</button>
         </div>
       </div>
     </article>
   )
 }
 
-// ─── Toast ────────────────────────────────────────────────────────────────────
-const Toast = ({ msg, type }: { msg: string; type: 'success' | 'error' }) => (
-  <div className={`toast toast-${type}`}>{msg}</div>
-)
-
 // ─── AbrigoFeed ─────────────────────────────────────────────────────────────
 export const AbrigoFeed = () => {
-  const { usuario } = useAuth()
   const navigate = useNavigate()
 
   const [abrigos, setAbrigos]     = useState<AbrigoFull[]>([])
@@ -231,13 +218,6 @@ export const AbrigoFeed = () => {
   const [showFiltros, setShowFiltros] = useState(false)
   const [estadoFiltro, setEstadoFiltro] = useState('')
   const [ordemAtiva, setOrdemAtiva] = useState<'recentes'|'nome'|'capacidade'>('recentes')
-
-  const [toast, setToast]         = useState<{ msg: string; type: 'success'|'error' } | null>(null)
-
-  const showToast = (msg: string, type: 'success'|'error') => {
-    setToast({ msg, type })
-    setTimeout(() => setToast(null), 3500)
-  }
 
   useEffect(() => {
     setLoading(true)
@@ -271,16 +251,6 @@ export const AbrigoFeed = () => {
   }, [abrigos, filtroAtivo, busca, estadoFiltro, ordemAtiva])
 
   const handleAbrir = (id: number) => navigate(`/abrigos/${id}`)
-
-  const handleDenunciar = async (id: number) => {
-    if (!usuario) { navigate('/login'); return }
-    try {
-      await api.post(`/denuncias/denunciar/${id}`)
-      showToast('Denúncia registrada. Obrigado! ✅', 'success')
-    } catch {
-      showToast('Erro ao registrar denúncia.', 'error')
-    }
-  }
 
   return (
     <>
@@ -422,7 +392,6 @@ export const AbrigoFeed = () => {
                   abrigo={a}
                   index={i}
                   onAbrir={handleAbrir}
-                  onDenunciar={handleDenunciar}
                 />
               ))
             )}
@@ -430,8 +399,6 @@ export const AbrigoFeed = () => {
         </div>
       </div>
 
-      {/* Toast */}
-      {toast && <Toast msg={toast.msg} type={toast.type} />}
     </>
   )
 }

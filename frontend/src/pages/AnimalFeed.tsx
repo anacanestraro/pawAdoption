@@ -5,7 +5,7 @@
  * Endpoints:
  *   GET /animais  → lista todos os animais (filtra DISPONIVEL no front)
  *   POST /solicitacoes/solicitarAdocao/:id → iniciar adoção (requer JWT)
- *   POST /denuncias/denunciar/:id          → denunciar animal  (requer JWT)
+ *   POST /denuncias/denunciar/:id          → denunciar anúncio (via DenunciaModal, com motivo)
  */
 
 import '../styles/Feed.css'
@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/api'
 import type { Animal } from '../types'
+import { DenunciaModal } from '../components/DenunciaModal'
 
 // ─── Paw pattern SVG (inline, 3% opacity) ────────────────────────────────────
 const PAW_BG = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='%232D1B14' fill-opacity='0.03'><ellipse cx='22' cy='30' rx='4' ry='5'/><ellipse cx='31' cy='24' rx='3.5' ry='4.5'/><ellipse cx='40' cy='24' rx='3.5' ry='4.5'/><ellipse cx='49' cy='30' rx='4' ry='5'/><path d='M30 43c0-5.5 3-9 7-9s7 3.5 7 9c0 3.5-2.5 5-5 5s-1.5 1-2 1-1.5-1-3.5-1-3.5-1.5-3.5-5z'/><ellipse cx='82' cy='90' rx='3' ry='4'/><ellipse cx='89' cy='85' rx='2.8' ry='3.8'/><ellipse cx='96' cy='85' rx='2.8' ry='3.8'/><ellipse cx='103' cy='90' rx='3' ry='4'/><path d='M88 100c0-4.5 2.5-7.5 5.5-7.5s5.5 3 5.5 7.5c0 3-2 4-4 4s-1.2.8-1.5.8-1.2-.8-2.5-.8-3-1-3-4z'/></g></svg>")`
@@ -93,13 +94,14 @@ const PhotoPlaceholder = ({ nome, index, emoji }: { nome: string; index: number;
 // ─── AnimalCard ───────────────────────────────────────────────────────────────
 
 const AnimalCard = ({
-  animal, index, onAdotar, onDenunciar, adotando
+  animal, index, onAdotar, onDenunciar, adotando, podeDenunciar
 }: {
   animal: Animal
   index: number
   onAdotar: (id: number) => void
-  onDenunciar: (id: number) => void
+  onDenunciar: (animal: Animal) => void
   adotando: boolean
+  podeDenunciar: boolean
 }) => {
   const emoji = especieEmoji(animal.especie)
   const isNew = new Date().getTime() - new Date(animal.created_at).getTime() < 7 * 24 * 60 * 60 * 1000
@@ -185,11 +187,14 @@ const AnimalCard = ({
           >
             {adotando ? '⏳' : '❤️'} Quero adotar
           </button>
-          <button
-            className="btn-denunciar"
-            onClick={() => onDenunciar(animal.id)}
-            title="Denunciar"
-          >⚑</button>
+          {podeDenunciar && (
+            <button
+              className="btn-denunciar"
+              onClick={() => onDenunciar(animal)}
+              title="Denunciar anúncio"
+              aria-label={`Denunciar anúncio de ${animal.nome}`}
+            >⚑</button>
+          )}
         </div>
       </div>
     </article>
@@ -221,6 +226,9 @@ export const AnimalFeed = () => {
   // Modal adoção
   const [adotando, setAdotando]       = useState(false)
   const [adotandoId, setAdotandoId]   = useState<number | null>(null)
+
+  // Denúncia
+  const [denunciando, setDenunciando] = useState<Animal | null>(null)
 
   // Toast
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
@@ -268,15 +276,17 @@ const handleAdotar = (id: number) => {
   navigate(`/adotar/${id}`)
 }
 
-  // Denunciar
-  const handleDenunciar = async (id: number) => {
+  // Denunciar: abre o modal com motivo (o envio fica no DenunciaModal)
+  const handleDenunciar = (animal: Animal) => {
     if (!usuario) { navigate('/login'); return }
-    try {
-      await api.post(`/denuncias/denunciar/${id}`)
-      showToast('Denúncia registrada. Obrigado por ajudar! ✅', 'success')
-    } catch {
-      showToast('Erro ao registrar denúncia.', 'error')
-    }
+    setDenunciando(animal)
+  }
+
+  // O dono não denuncia o próprio anúncio (abrigo ou lar temporário)
+  const ehDono = (a: Animal) => {
+    if (!usuario) return false
+    const larId = (a as Animal & { lar_temporario_id?: number | null }).lar_temporario_id
+    return a.abrigo_id === usuario.id || larId === usuario.id
   }
 
   return (
@@ -432,6 +442,7 @@ const handleAdotar = (id: number) => {
                   onAdotar={handleAdotar}
                   onDenunciar={handleDenunciar}
                   adotando={adotandoId === a.id}
+                  podeDenunciar={!ehDono(a)}
                 />
               ))
             )}
@@ -439,6 +450,18 @@ const handleAdotar = (id: number) => {
         </div>
 
       </div>
+
+      {/* Modal de denúncia */}
+      {denunciando && (
+        <DenunciaModal
+          animal={denunciando}
+          onClose={() => setDenunciando(null)}
+          onSucesso={() => {
+            setDenunciando(null)
+            showToast('Denúncia enviada. Um administrador vai revisar o anúncio. ✅', 'success')
+          }}
+        />
+      )}
 
       {/* Toast */}
       {toast && <Toast msg={toast.msg} type={toast.type} />}

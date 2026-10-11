@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../api/api'
 import { useAuth } from '../context/AuthContext'
+import { DenunciaModal } from '../components/DenunciaModal'
 
 // ─── Types locais ─────────────────────────────────────────────────────────────
 
@@ -161,6 +162,7 @@ export const AdocaoAnimal = () => {
   const [modal,    setModal]    = useState(false)
   const [enviando, setEnviando] = useState(false)
   const [toast,    setToast]    = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
+  const [denunciaAberta, setDenunciaAberta] = useState(false)
 
   const showToast = (msg: string, type: 'success' | 'error') => {
     setToast({ msg, type })
@@ -452,6 +454,21 @@ export const AdocaoAnimal = () => {
               )}
             </div>
 
+            {usuario && !ehDono && (
+              <button
+                type="button"
+                onClick={() => setDenunciaAberta(true)}
+                style={{
+                  alignSelf: 'center', marginTop: 4,
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: '0.8rem', fontWeight: 700, color: 'var(--ink-3)',
+                  textDecoration: 'underline', textUnderlineOffset: 3,
+                }}
+              >
+                ⚑ Denunciar anúncio
+              </button>
+            )}
+
           </div>
         </div>
       </div>
@@ -462,6 +479,17 @@ export const AdocaoAnimal = () => {
           enviando={enviando}
           onConfirmar={handleConfirmar}
           onCancelar={() => setModal(false)}
+        />
+      )}
+
+      {denunciaAberta && (
+        <DenunciaModal
+          animal={animal}
+          onClose={() => setDenunciaAberta(false)}
+          onSucesso={() => {
+            setDenunciaAberta(false)
+            showToast('Denúncia enviada. Um administrador vai revisar o anúncio. ✅', 'success')
+          }}
         />
       )}
 
