@@ -73,6 +73,48 @@ export const listarVoluntariosRecebidos = async (req: AuthRequest, res: Response
     }
 }
 
+// Adotantes disponíveis como lar temporário — o abrigo encontra e contata por fora (RF11)
+export const listarLaresTemporarios = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        if (req.usuario.tipo_usuario !== 'ABRIGO' && req.usuario.tipo_usuario !== 'ADMINISTRADOR') {
+            return res.status(403).json({ error: "Apenas abrigos podem buscar lares temporários" });
+        }
+
+        const lares = await prisma.adotante.findMany({
+            where: {
+                lar_temporario: true,
+                deleted_at: null,
+                usuario: { ativo: true },
+            },
+            // Só dados de contato e localização — nunca CPF ou data de nascimento
+            select: {
+                usuario_id: true,
+                capacidade_lar_temporario: true,
+                usuario: {
+                    select: {
+                        id: true,
+                        nome: true,
+                        email: true,
+                        telefone: true,
+                        endereco: {
+                            select: { bairro: true, cidade: true, estado: true }
+                        }
+                    }
+                }
+            },
+            orderBy: { usuario: { nome: "asc" } }
+        });
+
+        return res.status(200).json(lares);
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao buscar lares temporários" });
+    }
+}
+
 export const listarMinhasSolicitacoes = async(req: AuthRequest, res: Response) => {
     try {
         if (!req.usuario) {
