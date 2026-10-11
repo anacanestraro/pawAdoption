@@ -4,6 +4,20 @@ import { NovoAnimalDTO } from "../dtos/AnimalDTO";
 import { AuthRequest } from "../middlewares/auth";
 import { Status } from "@prisma/client";
 import { ehDonoDoAnimal } from "../utils/authAnimal";
+import { MAX_FOTOS_ANIMAL } from "../middlewares/upload";
+import fs from "fs";
+
+// Campos públicos do usuário anunciante (nunca expor senha_hash)
+const selectUsuarioPublico = {
+    select: { id: true, nome: true, email: true, telefone: true },
+};
+
+// Apaga do disco arquivos que o multer já salvou mas que não serão usados
+const descartarArquivos = (arquivos: Express.Multer.File[]) => {
+    for (const arquivo of arquivos) {
+        fs.unlink(arquivo.path, () => {});
+    }
+};
 
 export const listarAnimais = async (req: Request, res: Response) => {
     try {
@@ -163,31 +177,60 @@ export const deletarAnimal = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export const uploadFotoAnimal = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const file = req.file;
+// Recebe de 1 a 5 fotos de uma vez (campo "fotos"); o total do animal não passa de 5
+export const uploadFotosAnimal = async (req: AuthRequest, res: Response) => {
+    const { id } = req.params;
+    const arquivos = (req.files as Express.Multer.File[] | undefined) ?? [];
 
-        if (!file) {
-            return res.status(400).json({ error: "Nenhum arquivo enviado." });
+    try {
+        if (!req.usuario) {
+            descartarArquivos(arquivos);
+            return res.status(401).json({ error: "Usuário não autenticado" });
         }
 
-        const animal = await prisma.animal.findUnique({ where: { id: Number(id) } });
-        if (!animal) {
+        if (arquivos.length === 0) {
+            return res.status(400).json({ error: "Nenhuma foto enviada." });
+        }
+
+        const animal = await prisma.animal.findUnique({
+            where: { id: Number(id) },
+            include: { _count: { select: { fotos: true } } },
+        });
+
+        if (!animal || animal.deleted_at) {
+            descartarArquivos(arquivos);
             return res.status(404).json({ error: "Animal não encontrado." });
         }
 
-        const foto = await prisma.animalFoto.create({
-            data: {
-                animal_id: Number(id),
-                url_foto: `/uploads/animais/${file.filename}`,
-                validada: false
-            },
-        });
+        if (!ehDonoDoAnimal(req.usuario, animal)) {
+            descartarArquivos(arquivos);
+            return res.status(403).json({ error: "Você não tem permissão para alterar este animal" });
+        }
 
-        return res.status(201).json(foto);
+        const total = animal._count.fotos + arquivos.length;
+        if (total > MAX_FOTOS_ANIMAL) {
+            descartarArquivos(arquivos);
+            return res.status(400).json({
+                error: `Cada animal pode ter no máximo ${MAX_FOTOS_ANIMAL} fotos (este já tem ${animal._count.fotos}).`,
+            });
+        }
+
+        const fotos = await prisma.$transaction(
+            arquivos.map(arquivo =>
+                prisma.animalFoto.create({
+                    data: {
+                        animal_id: Number(id),
+                        url_foto: `/uploads/animais/${arquivo.filename}`,
+                        validada: false,
+                    },
+                })
+            )
+        );
+
+        return res.status(201).json(fotos);
     } catch (error) {
-        return res.status(500).json({ error: "Erro ao fazer upload da foto." });
+        descartarArquivos(arquivos);
+        return res.status(500).json({ error: "Erro ao fazer upload das fotos." });
     }
 }
 
@@ -200,10 +243,10 @@ export const animalPorID = async (req: Request, res: Response) => {
             include: {
                 fotos: true,
                 abrigo: {
-                    include: { usuario: true }
+                    include: { usuario: selectUsuarioPublico }
                 },
                 lar_temporario: {
-                    include: { usuario: true }
+                    include: { usuario: selectUsuarioPublico }
                 }
             }
         });

@@ -224,6 +224,10 @@ export const AdocaoAnimal = () => {
 
   const fotos     = animal.fotos ?? []
   const fotoAtual = fotos[fotoIdx]
+  const temVarias = fotos.length > 1
+
+  const irPara = (delta: number) =>
+    setFotoIdx(i => (i + delta + fotos.length) % fotos.length)
   const fotoUrl   = fotoAtual?.url_foto
     ? `${import.meta.env.VITE_API_URL}${fotoAtual.url_foto}`
     : null
@@ -277,9 +281,18 @@ export const AdocaoAnimal = () => {
           {/* ── Coluna esquerda — Foto ── */}
           <div className="adocao-col-foto">
 
-            <div className="adocao-foto-wrap">
+            <div
+              className="adocao-foto-wrap"
+              tabIndex={temVarias ? 0 : undefined}
+              onKeyDown={e => {
+                if (!temVarias) return
+                if (e.key === 'ArrowLeft')  irPara(-1)
+                if (e.key === 'ArrowRight') irPara(1)
+              }}
+              aria-label={temVarias ? `Foto ${fotoIdx + 1} de ${fotos.length}. Use as setas para navegar.` : undefined}
+            >
               {fotoUrl ? (
-                <img src={fotoUrl} alt={animal.nome} className="adocao-foto" />
+                <img src={fotoUrl} alt={`${animal.nome} — foto ${fotoIdx + 1}`} className="adocao-foto" />
               ) : (
                 <div
                   className="adocao-foto-placeholder"
@@ -295,9 +308,41 @@ export const AdocaoAnimal = () => {
                   {animal.status === 'ADOTADO' ? '🏠 Adotado' : '⏳ Em processo'}
                 </div>
               )}
+
+              {temVarias && (
+                <>
+                  {([['‹', -1, 'Foto anterior', { left: 12 }], ['›', 1, 'Próxima foto', { right: 12 }]] as const).map(
+                    ([simbolo, delta, rotulo, lado]) => (
+                      <button
+                        key={rotulo}
+                        type="button"
+                        onClick={() => irPara(delta)}
+                        aria-label={rotulo}
+                        style={{
+                          position: 'absolute', top: '50%', transform: 'translateY(-50%)', ...lado,
+                          width: 40, height: 40, borderRadius: '50%', border: 'none',
+                          background: 'rgba(255,255,255,0.88)', color: '#1A2238',
+                          fontSize: 26, fontWeight: 700, lineHeight: 1, cursor: 'pointer',
+                          display: 'grid', placeItems: 'center', paddingBottom: 3,
+                          boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        {simbolo}
+                      </button>
+                    )
+                  )}
+                  <span style={{
+                    position: 'absolute', bottom: 12, right: 12,
+                    background: 'rgba(0,0,0,0.6)', color: '#fff',
+                    fontSize: 12, fontWeight: 800, padding: '4px 10px', borderRadius: 999,
+                  }}>
+                    {fotoIdx + 1}/{fotos.length}
+                  </span>
+                </>
+              )}
             </div>
 
-            {fotos.length > 1 && (
+            {temVarias && (
               <div className="adocao-thumbs">
                 {fotos.map((f, i) => (
                   <button
