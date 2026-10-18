@@ -40,33 +40,14 @@
 .appfooter-logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   margin-bottom: 16px;
 }
 
-.appfooter-logo-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--blue, #175EA8);
-  display: grid;
-  place-items: center;
-  font-size: 1.2rem;
-  box-shadow: 0 4px 0 var(--blue-700, #114a85);
-  flex-shrink: 0;
-}
-
-.appfooter-logo-text {
-  font-family: 'Baloo 2', system-ui, sans-serif;
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--footer-text);
-  letter-spacing: -0.02em;
-}
-
-.appfooter-logo-text span {
-  color: var(--orange, #D34C25);
+.appfooter-logo img {
+  height: 40px;
+  width: auto;
+  display: block;
 }
 
 /* ── About text ── */
@@ -243,29 +224,13 @@
 .appfooter-compact-logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   text-decoration: none;
 }
 
-.appfooter-compact-logo-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: var(--blue, #175EA8);
-  display: grid;
-  place-items: center;
-  font-size: 0.9rem;
-}
-
-.appfooter-compact-logo-text {
-  font-family: 'Baloo 2', system-ui, sans-serif;
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--footer-text);
-}
-
-.appfooter-compact-logo-text span {
-  color: var(--orange, #D34C25);
+.appfooter-compact-logo img {
+  height: 26px;
+  width: auto;
+  display: block;
 }
 
 .appfooter-compact-links {

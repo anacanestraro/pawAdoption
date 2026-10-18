@@ -4,7 +4,12 @@
  */
 
 import { Link } from 'react-router-dom'
+import { useTheme } from '../context/ThemeContext'
 import '../styles/AppFooter.css'
+
+// Footer claro (#F5ECD7) usa o lockup claro; footer escuro usa o original
+import logo_clara from '../assets/lockup_claro.png'
+import logo_escura from '../assets/lockup_original.png'
 
 interface AppFooterProps {
   variant?: 'full' | 'compact'
@@ -12,17 +17,14 @@ interface AppFooterProps {
 
 export const AppFooter = ({ variant = 'full' }: AppFooterProps) => {
   const year = new Date().getFullYear()
+  const { theme } = useTheme()
+  const logo = theme === 'dark' ? logo_escura : logo_clara
 
   if (variant === 'compact') {
     return (
       <footer className="appfooter-compact">
-        <Link to="/" className="appfooter-compact-logo">
-          <div className="appfooter-compact-logo-icon">
-            <span>🐾</span>
-          </div>
-          <span className="appfooter-compact-logo-text">
-            Paw<span>Adoption</span>
-          </span>
+        <Link to="/" className="appfooter-compact-logo" aria-label="PawAdoption — página inicial">
+          <img src={logo} alt="" />
         </Link>
         <div>© {year} PawAdoption · Feito com ❤️ para os animais.</div>
         <div className="appfooter-compact-links">
@@ -41,11 +43,8 @@ export const AppFooter = ({ variant = 'full' }: AppFooterProps) => {
 
           {/* Coluna 1 — Logo + about */}
           <div className="col-12 col-md-3">
-            <Link to="/" className="appfooter-logo">
-              <div className="appfooter-logo-icon">🐾</div>
-              <span className="appfooter-logo-text">
-                Paw<span>Adoption</span>
-              </span>
+            <Link to="/" className="appfooter-logo" aria-label="PawAdoption — página inicial">
+              <img src={logo} alt="" />
             </Link>
             <p className="appfooter-about">
               Conectando animais que precisam de lar com pessoas que têm amor para dar. Desde 2017. 🐾

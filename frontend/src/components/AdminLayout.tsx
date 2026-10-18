@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import logo_clara from '../assets/lockup_claro.png'
+import logo_escura from '../assets/lockup_original.png'
 
 // ─── Itens do menu ────────────────────────────────────────────────────────────
 
@@ -69,35 +71,16 @@ const CSS = `
     min-width: 0;
   }
 
-  .al-logo-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: var(--blue);
-    display: grid;
-    place-items: center;
-    font-size: 16px;
-    box-shadow: 0 3px 0 var(--blue-700);
-    transform: rotate(-6deg);
-    flex-shrink: 0;
+  /* Lockup completo com a sidebar aberta; só o selo do "P" recolhida */
+  .al-logo-img  { height: 30px; width: auto; display: block; }
+  .al-logo-mark {
+    width: 34px; height: 34px; border-radius: 10px; display: none;
+    transform: rotate(-6deg); flex-shrink: 0;
   }
-
-  .al-logo-text {
-    font-family: 'Baloo 2', system-ui, sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    transition: opacity 0.15s, width 0.2s;
-    overflow: hidden;
-  }
-
-  .al-logo-text span { color: var(--orange); }
-
-  .al-sidebar--collapsed .al-logo-text {
-    opacity: 0;
-    width: 0;
-  }
+  .al-sidebar--collapsed .al-logo-img  { display: none; }
+  .al-sidebar--collapsed .al-logo-mark { display: block; width: 28px; height: 28px; border-radius: 8px; }
+  .al-sidebar--collapsed .al-sidebar-header { gap: 4px; }
+  .al-sidebar--collapsed .al-logo { flex: 0 0 auto; }
 
   .al-collapse-btn {
     width: 28px;
@@ -121,7 +104,8 @@ const CSS = `
   }
 
   .al-sidebar--collapsed .al-collapse-btn {
-    margin: 0 auto;
+    width: 24px;
+    height: 24px;
   }
 
   /* ── Badge admin ── */
@@ -502,9 +486,9 @@ export const AdminLayout = () => {
 
           {/* Header */}
           <div className="al-sidebar-header">
-            <a className="al-logo" href="/admin">
-              <div className="al-logo-icon">🐾</div>
-              <span className="al-logo-text">Paw<span>Adoption</span></span>
+            <a className="al-logo" href="/admin" aria-label="PawAdoption — painel administrativo">
+              <img src={theme === 'dark' ? logo_escura : logo_clara} className="al-logo-img" alt="" />
+              <img src="/favicon-192.png" className="al-logo-mark" alt="" />
             </a>
             <button
               className="al-collapse-btn"
