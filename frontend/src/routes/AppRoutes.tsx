@@ -15,6 +15,7 @@ import { Voluntarios } from '../pages/Voluntarios'
 import { AbrigoPerfil } from '../pages/AbrigoPerfil'
 import { AdminDenuncias } from '../pages/AdminDenuncias'
 import { Relatorio } from '../pages/Relatorio'
+import { Sobre } from '../pages/Sobre'
 
 export const AppRoutes = () => {
   return (
@@ -36,7 +37,7 @@ export const AppRoutes = () => {
           <Route path="/home/voluntarios"  element={<Voluntarios />} />
           <Route path="/home/solicitacoes" element={<Solicitacoes />} />
           <Route path="/contato"           element={<h1>Contato</h1>} />
-          <Route path="/sobre"             element={<h1>Sobre</h1>} />
+          <Route path="/sobre"             element={<Sobre />} />
           <Route path="/home/relatorio"    element={<Relatorio />} />
         </Route>
       </Route>
