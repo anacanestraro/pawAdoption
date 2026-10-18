@@ -11,4 +11,5 @@ router.put("/editar/:id", autenticarJWT, AnimalController.atualizarAnimal);
 router.delete("/deletar/:id", autenticarJWT, AnimalController.deletarAnimal);
 router.post("/:id/fotos", autenticarJWT, uploadFotos, AnimalController.uploadFotosAnimal);
 router.get("/buscarAnimal/:id", autenticarJWT, AnimalController.animalPorID);
+router.get("/relatorio", autenticarJWT, AnimalController.relatorioAnimais);
 export default router;

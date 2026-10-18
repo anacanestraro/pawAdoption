@@ -65,6 +65,74 @@ export const listarMeusAnimais = async (req: AuthRequest, res: Response) => {
     }
 }
 
+// Relatório dos animais sob cuidados do usuário logado (RF08 / RN15).
+// Mesma regra de posse do listarMeusAnimais: abrigo → abrigo_id; adotante → lar_temporario_id.
+export const relatorioAnimais = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.usuario) {
+            return res.status(401).json({ error: "Usuário não autenticado" });
+        }
+
+        const { id, tipo_usuario } = req.usuario;
+
+        if (tipo_usuario !== "ABRIGO" && tipo_usuario !== "ADOTANTE") {
+            return res.status(403).json({ error: "Tipo de usuário não possui animais sob cuidados" });
+        }
+
+        const where =
+            tipo_usuario === "ABRIGO"
+                ? { abrigo_id: id, deleted_at: null }
+                : { lar_temporario_id: id, deleted_at: null };
+
+        const animais = await prisma.animal.findMany({
+            where,
+            select: {
+                id: true,
+                nome: true,
+                especie: true,
+                raca: true,
+                idade: true,
+                porte: true,
+                sexo: true,
+                status: true,
+                created_at: true,
+                data_adocao: true,
+                adotante: {
+                    select: { usuario: { select: { nome: true, email: true } } },
+                },
+            },
+            orderBy: { created_at: "desc" },
+        });
+
+        const contar = (status: Status) => animais.filter(a => a.status === status).length;
+
+        // Totais por espécie (com quantos já foram adotados)
+        const especies = new Map<string, { especie: string; total: number; adotados: number }>();
+        for (const a of animais) {
+            const chave = a.especie.trim().toLowerCase();
+            const item = especies.get(chave) ?? { especie: a.especie.trim(), total: 0, adotados: 0 };
+            item.total += 1;
+            if (a.status === Status.ADOTADO) item.adotados += 1;
+            especies.set(chave, item);
+        }
+
+        return res.status(200).json({
+            geradoEm: new Date(),
+            resumo: {
+                total: animais.length,
+                disponiveis: contar(Status.DISPONIVEL),
+                emProcesso: contar(Status.PROCESSO_ADOCAO),
+                pendentes: contar(Status.PENDENTE),
+                adotados: contar(Status.ADOTADO),
+            },
+            porEspecie: [...especies.values()].sort((a, b) => b.total - a.total),
+            animais,
+        });
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao gerar relatório" });
+    }
+}
+
 export const cadastrarAnimal = async (req: AuthRequest<NovoAnimalDTO>, res: Response) => {
     const dados = req.body;
 

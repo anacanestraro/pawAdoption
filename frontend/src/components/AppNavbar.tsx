@@ -241,6 +241,15 @@ export const AppNavbar = ({ links }: AppNavbarProps) => {
                         Meu perfil
                       </Link>
                     )}
+                    {(usuario.tipo_usuario === 'ABRIGO' || usuario.tipo_usuario === 'ADOTANTE') && (
+                      <Link
+                        to="/home/relatorio"
+                        className="appnav-dropdown-link"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        Relatório de animais
+                      </Link>
+                    )}
                     <button className="appnav-dropdown-btn" onClick={() => { logout(); navigate('/login') }}>Sair</button>
                   </div>
                 )}
